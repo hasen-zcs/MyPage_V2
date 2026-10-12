@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Hasen 的博客文章 — 深度学习、AI、GPU 计算的技术笔记。">
+    <meta name="theme-color" content="#0b1110">
+    <!-- Open Graph / Social -->
+    <meta property="og:title" content="文章 — Hasen">
+    <meta property="og:description" content="博客文章 — 深度学习、AI、GPU 计算的技术笔记。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://hasen.dev/article.html">
+    <meta property="og:image" content="https://hasen.dev/assets/og-article.png">
+    <meta property="og:locale" content="zh_CN">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="文章 — Hasen">
+    <meta name="twitter:description" content="博客文章 — 深度学习、AI、GPU 计算的技术笔记。">
+    <meta name="twitter:image" content="https://hasen.dev/assets/og-article.png">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
+    <link rel="manifest" href="manifest.json">
+    <title>文章 — Hasen</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* Article page specific styles */
+        .article-layout {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 0 20px 80px;
+        }
+
+        .article-header {
+            margin-bottom: 40px;
+        }
+
+        .article-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            transition: color 0.2s;
+        }
+
+        .article-back:hover {
+            color: var(--green);
+        }
+
+        .article-category {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            padding: 3px 10px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        .article-category--blue { color: var(--blue); background: rgba(59, 141, 212, 0.08); }
+        .article-category--amber { color: var(--amber); background: rgba(232, 168, 56, 0.08); }
+        .article-category--coral { color: var(--coral); background: rgba(217, 91, 67, 0.08); }
+        .article-category--green { color: var(--green); background: var(--green-glow); }
+        .article-category--violet { color: var(--violet); background: rgba(123, 97, 174, 0.08); }
+
+        .article-title {
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .article-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .article-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .article-divider {
+            width: 1px;
+            height: 12px;
+            background: var(--border);
+        }
+
+        .article-content {
+            font-size: 15px;
+            line-height: 1.75;
+            color: var(--text);
+        }
+
+        .article-content h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-top: 40px;
+            margin-bottom: 16px;
+            letter-spacing: -0.01em;
+        }
+
+        .article-content h3 {
+            font-size: 19px;
+            font-weight: 600;
+            margin-top: 32px;
+            margin-bottom: 12px;
+        }
+
+        .article-content p {
+            margin-bottom: 16px;
+        }
+
+        .article-content ul, .article-content ol {
+            margin: 16px 0;
+            padding-left: 24px;
+        }
+
+        .article-content li {
+            margin-bottom: 8px;
+        }
+
+        .article-content blockquote {
+            border-left: 3px solid var(--green);
+            padding: 12px 20px;
+            margin: 20px 0;
+            background: var(--green-glow);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .article-content code {
+            font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", "Consolas", monospace;
+            font-size: 0.9em;
+            background: var(--surface-hover);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 2px 6px;
+            color: var(--green);
+        }
+
+        .article-content pre {
+            position: relative;
+            margin: 20px 0;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .article-content pre code {
+            display: block;
+            padding: 20px;
+            background: var(--surface);
+            border: none;
+            font-size: 13px;
+            line-height: 1.7;
+            overflow-x: auto;
+            color: var(--text);
+            padding-right: 60px;
+        }
+
+        .code-lang {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: inherit;
+        }
+
+        .article-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .article-tag {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background: var(--surface-hover);
+            border: 1px solid var(--border);
+            padding: 4px 12px;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+
+        .article-tag:hover {
+            color: var(--green);
+            background: var(--green-glow);
+            border-color: var(--green-glow-strong);
+        }
+
+        .article-nav {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border);
+        }
+
+        .article-nav-item {
+            padding: 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            transition: all 0.2s;
+        }
+
+        .article-nav-item:hover {
+            border-color: var(--border-strong);
+            box-shadow: var(--shadow);
+        }
+
+        .article-nav-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 6px;
+        }
+
+        .article-nav-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--green);
+        }
+
+        .article-nav-item.next {
+            text-align: right;
+        }
+
+        /* Loading state */
+        .article-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 40vh;
+        }
+
+        .article-loading-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border);
+            border-top-color: var(--green);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* Error state */
+        .article-error {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .article-error h2 {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .article-error p {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .article-title {
+                font-size: 28px;
+            }
+
+            .article-content {
+                font-size: 15px;
+            }
+
+            .article-content pre code {
+                font-size: 12px;
+                padding: 16px;
+            }
+
+            .article-nav {
+                grid-template-columns: 1fr;
+            }
+
+            .article-nav-item.next {
+                text-align: left;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .article-title {
+                font-size: 24px;
+            }
+
+            .article-content h2 {
+                font-size: 20px;
+            }
+
+            .article-content h3 {
+                font-size: 17px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== Navbar ==================== -->
+    <nav class="navbar" id="navbar">
+        <a href="home.html" class="logo">
+            <span class="logo-dot"></span>
+            hasen
+        </a>
+        <ul class="nav-links">
+            <li><a href="home.html">首页</a></li>
+            <li><a href="blog.html">博客</a></li>
+            <li><a href="projects.html">项目</a></li>
+            <li><a href="ideas.html">思考</a></li>
+            <li><a href="about.html">关于</a></li>
+        </ul>
+        <div class="nav-actions">
+            <button class="theme-toggle" id="theme-toggle" aria-label="切换主题">
+                <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+            <button class="hamburger" id="hamburger" aria-label="菜单">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ==================== Mobile Nav Overlay ==================== -->
+    <div class="mobile-nav" id="mobile-nav">
+        <button class="theme-toggle mobile-theme-toggle" id="theme-toggle-mobile" aria-label="切换主题">
+            <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <a href="home.html">首页</a>
+        <a href="blog.html">博客</a>
+        <a href="projects.html">项目</a>
+        <a href="ideas.html">思考</a>
+        <a href="about.html">关于</a>
+    </div>
+
+    <!-- ==================== Article Content ==================== -->
+    <main class="main">
+        <div class="article-layout" id="article-container">
+            <div class="article-loading">
+                <div class="article-loading-spinner"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ==================== Footer ==================== -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <span>© 2026 Hasen</span>
+            <span>Built with HTML · CSS · JavaScript</span>
+        </div>
+    </footer>
+
+    <!-- ==================== Article Data ==================== -->
+    <script id="article-data" type="application/json">
+{
+    "flashattention-causal": {
+        "title": "FlashAttention 中的 Causal Mask",
+        "category": "GPU",
+        "categoryClass": "blue",
+        "date": "2026-08-16",
+        "readTime": 8,
+        "tags": ["FlashAttention", "Attention", "GPU", "Causal Mask", "Score Tile"],
+        "content": "# FlashAttention 中的 Causal Mask\n\n在实现 FlashAttention 时，**因果掩码（Causal Mask）** 的处理是一个关键的细节。它确保在计算 self-attention 时，每个 token 只能 attend 到它之前的 token（包括自己）。\n\n## Score Tile 的思路\n\nFlashAttention 将 QKᵀ 的计算分块进行。设 Q 的分块为 Qᵢ，K 的分块为 Kⱼ，则 score tile Sᵢⱼ = QᵢKⱼᵀ。\n\n对于 causal attention，当 token 索引 i < j 时，attention 权重应该为 0（因为当前 token 不能看到未来 token）。\n\n## 分块计算中的问题\n\n当 Q 的第 i 个 block 与 K 的第 j 个 block 计算时：\n\n- 如果 block_i 的最大位置 < block_j 的最小位置，则整个 tile 都应该被 mask 掉\n- 如果 block_i 的最小位置 >= block_j 的最大位置，则整个 tile 都不需要 mask\n- 否则，tile 中需要部分 mask\n\n### 关键观察\n\n设每个 block 的大小为 B，则：\n- block_i 的位置范围：[iB, (i+1)B)\n- block_j 的位置范围：[jB, (j+1)B)\n\ncausal condition: position_i >= position_j\n\n即：iB + a >= jB + b（其中 a, b ∈ [0, B)）\n\n当 **i < j** 时，需要逐行检查哪些位置满足条件。\n\n## 实现细节\n\n```python\n# Score Tile 计算\nS[i, j] = Q_chunk[i] @ K_chunk[j].transpose(-2, -1)  # (B, H, L, L)\n\n# Causal mask\nmask = torch.tril(torch.ones(B, B, device=device))\nS[i, j] = S[i, j] * mask + (-1e9) * (1 - mask)\n\n# Softmax\nP[i, j] = softmax(S[i, j], dim=-1)\n```\n\n## 性能优化\n\nFlashAttention 的关键优化在于：**不在 global memory 中保存 S tile**，而是在计算 softmax 的同时就输出 O tile。\n\n```python\n# 逐 tile 更新 m, l, o\nm_new = max(m_old, S_max)\nl_new = exp(m_old - m_new) * l_old + sum(exp(S - m_new), dim=-1)\no_new = (o_old * exp(m_old - m_new) * l_old + exp(S - m_new) * V) / l_new\n```\n\n这种 **online softmax** 的计算方式避免了将整个 S 矩阵存回 global memory。\n\n## 总结\n\nCausal mask 在 FlashAttention 中的处理虽然增加了一些计算复杂性，但通过 careful tile-level masking 仍然可以高效实现。核心在于理解 Score Tile 与位置的关系。\n\n---\n\n*参考：[FlashAttention: Fast and Memory-Efficient Exact Attention](https://arxiv.org/abs/2205.14135)*"
+    },
+
+    "transformer-notes": {
+        "title": "Transformer 学习记录",
+        "category": "Transformer",
+        "categoryClass": "amber",
+        "date": "2026-08-13",
+        "readTime": 12,
+        "tags": ["Transformer", "Attention", "Encoder", "Decoder", "位置编码"],
+        "content": "# Transformer 学习记录\n\n从零理解 Transformer 的架构设计。梳理每个组件的作用和数学推导。\n\n## 多头注意力（Multi-Head Attention）\n\n核心公式：\n\n> **Attention(Q, K, V) = softmax(QKᵀ / √dₖ)V**\n\n多头注意力的实现方式：\n\n```python\ndef multi_head_attention(Q, K, V, num_heads):\n    d_k = Q.shape[-1] // num_heads\n    \n    # Linear projections\n    Q = Q.view(bs, seq, num_heads, d_k).transpose(1, 2)\n    K = K.view(bs, seq, num_heads, d_k).transpose(1, 2)\n    V = V.view(bs, seq, num_heads, d_k).transpose(1, 2)\n    \n    # Scaled dot-product\n    scores = torch.matmul(Q, K.transpose(-2, -1)) / math.sqrt(d_k)\n    attn = softmax(scores, dim=-1)\n    \n    return torch.matmul(attn, V)\n```\n\n## 位置编码（Positional Encoding）\n\nTransformer 没有递归结构，因此需要显式注入位置信息。原始 Transformer 使用正弦位置编码：\n\n> **PE(pos, 2i) = sin(pos / 10000^(2i/d_model))**\n> **PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))**\n\n### 为什么选择正弦函数？\n\n1. **周期性**：可以表示任意相对位置\n2. **外推性**：训练时未见过的长度也能处理\n3. **相对位置**：PE(pos+k) 可以由 PE(pos) 线性表示\n\n## Encoder vs Decoder\n\n| 特性 | Encoder | Decoder |\n|------|---------|---------|\n| Self-attention | 无 mask |  causal mask |\n| Cross-attention | - | Q来自Decoder，K,V来自Encoder |\n| 输出 | 隐状态 | 词元序列 |\n\n## 残差连接与 LayerNorm\n\n每个子层后都有残差连接 + LayerNorm：\n\n> **LayerNorm(x + Sublayer(x))**\n\n这与 ResNet 的 **BatchNorm(x + Sublayer(x))** 类似，但 LayerNorm 在特征维度上归一化，不依赖 batch。\n\n---\n\n*下一篇：RoPE、YaRN 与 RMSNorm 的学习记录*"
+    },
+
+    "rope-yarn-rmsnorm": {
+        "title": "RoPE、YaRN 与 RMSNorm",
+        "category": "AI",
+        "categoryClass": "coral",
+        "date": "2026-08-13",
+        "readTime": 10,
+        "tags": ["RoPE", "YaRN", "RMSNorm", "位置编码", "MiniMind"],
+        "content": "# RoPE、YaRN 与 RMSNorm\n\nMiniMind 学习过程中的一些记录。对比不同位置编码方法的优劣，以及 RMSNorm 在训练稳定性中的作用。\n\n## Rotary Position Embedding (RoPE)\n\nRoPE 的核心思想是 **通过旋转矩阵注入绝对位置信息**，同时保持相对位置关系的可表达能力。\n\n对于位置 p 的 query 和 key：\n\n> **Q_p = RoPE(Q) · Q**\n> **K_p = RoPE(K) · K**\n\n其中 RoPE 是一个块对角旋转矩阵。两个 token 的内积只依赖于它们的相对位置。\n\n### 优点\n\n1. **相对位置感知**：attention 权重天然依赖于相对位置\n2. **外推性好**：比正弦位置编码更好地处理长序列\n3. **实现简单**：只需在 Q、K 上做旋转\n\n## Yet Another RoPE (YaRN)\n\nYaRN 是对 RoPE 的改进，解决 RoPE 在训练长度之外表现不佳的问题。\n\n核心改进：\n\n```python\n# 频率缩放\nfreqs = base_freq * (temperature ** (dim / dim_total))\n\n# 插值到目标长度\nfreqs_scaled = interpolate_freqs(freqs, current_len, target_len)\n```\n\nYaRN 通过 **缩放频率** 来适配不同长度的序列，在保持相对位置感知的同时提升了外推能力。\n\n## RMSNorm\n\nRMSNorm 是 LayerNorm 的简化版本：\n\n> **RMSNorm(x) = x / RMS(x) · γ**\n> **RMS(x) = sqrt(mean(x²) + ε)**\n\n与 LayerNorm 的区别：**去掉了均值归一化**，只保留均方根。\n\n### 为什么有效？\n\n- 实验表明 RMSNorm 与 LayerNorm 效果相当\n- 计算更简单，不需要计算均值\n- 在 LLM 训练中表现稳定\n\n---\n\n*参考：[RoFormer: Enhanced Transformer](https://arxiv.org/abs/2104.09864)*"
+    },
+
+    "homepage-design": {
+        "title": "个人主页设计笔记",
+        "category": "其他",
+        "categoryClass": "green",
+        "date": "2026-08-10",
+        "readTime": 5,
+        "tags": ["设计", "CSS", "响应式", "暗色主题"],
+        "content": "# 个人主页设计笔记\n\n从 V1 到 V2 的设计思考：为什么选择暗色主题、CSS 变量的使用、响应式断点的选择。\n\n## 为什么选择暗色主题？\n\n1. **面向开发者**：大多数开发者偏好暗色环境\n2. **减少视觉疲劳**：长时间浏览更舒适\n3. **绿色品牌更突出**：暗色背景下绿色更醒目\n\n## CSS 变量设计\n\n```css\n:root {\n    --green: #2d8a5e;\n    --green-light: #4db67a;\n    --text: #1a1f1d;\n    --bg: #fafcfb;\n}\n\n[data-theme=\"dark\"] {\n    --green: #4db67a;\n    --text: #e6efe8;\n    --bg: #0b1110;\n}\n```\n\n通过 CSS 变量实现主题切换，无需 JavaScript 操作具体样式。\n\n## 响应式断点选择\n\n| 断点 | 宽度 | 变化 |\n|------|------|------|\n| xl | ≥1024px | 双栏布局 |\n| lg | ≤1024px | 单栏 |\n| md | ≤768px | 汉堡菜单 |\n| sm | ≤480px | 紧凑布局 |\n\n## 设计原则\n\n- 内容优先，设计不抢风头\n- 绿色作为品牌色贯穿始终\n- 微妙的动画增强体验，不喧宾夺主\n\n---\n\n*这是第一篇设计笔记，后续会持续更新。*"
+    },
+
+    "diffusion-intro": {
+        "title": "Diffusion Model 入门笔记",
+        "category": "AI",
+        "categoryClass": "violet",
+        "date": "2026-08-05",
+        "readTime": 15,
+        "tags": ["Diffusion", "DDPM", "Stable Diffusion", "Latent Diffusion"],
+        "content": "# Diffusion Model 入门笔记\n\n从 DDPM 到 Stable Diffusion：扩散模型的训练过程、采样算法、以及 latent diffusion 的设计思路。\n\n## 扩散过程（Forward Process）\n\n扩散模型的核心思想是 **逐步添加高斯噪声**，直到数据变成纯噪声：\n\n> **q(x_t | x_{t-1}) = N(x_t; √(1-β_t) · x_{t-1}, β_t · I)**\n\n其中 β_t 是预设的噪声调度（noise schedule）。\n\n## 去噪过程（Reverse Process）\n\n模型学习从噪声中恢复数据：\n\n> **p_θ(x_{t-1} | x_t) = N(x_{t-1}; μ_θ(x_t, t), σ_t² · I)**\n\n### 训练目标\n\n简化后的 ELBO 损失：\n\n```python\n# 预测噪声（简化版 DDPM 损失）\nloss = MSE(noise, model(x_t, t))\n```\n\n其中 model 通常是一个 U-Net，输入是带噪声的图像和时间步 t。\n\n## Latent Diffusion（Stable Diffusion）\n\n核心创新：**在潜空间（latent space）中进行扩散**，而非像素空间。\n\n```python\n# 1. 用 VAE 编码器压缩到潜空间\nz = E(x)  # 768 × 64 × 64\n\n# 2. 在潜空间做扩散\nx_t = α_t · z + σ_t · ε\n\n# 3. U-Net 在潜空间去噪\nε_θ = UNet(x_t, t, context=text_embeddings)\n\n# 4. 用 VAE 解码器恢复\nx_recon = D(z_recon)\n```\n\n### 为什么有效？\n\n1. **计算效率**：64×64 的潜空间比 512×512 的像素空间快 8 倍\n2. **保留语义**：VAE 学习到了有用的特征表示\n3. **文本控制**：通过 cross-attention 接入文本条件\n\n## 采样算法\n\n### DDIM 采样\n\n```python\n# DDIM 采样（确定性）\nfor t in T-1, ..., 0:\n    ε_θ = model(x_t, t)\n    x_{t-1} = α_{t-1} · (x_t - √(1-α_{t-1}) · ε_θ) / √α_t + √(1-α_t) · ε_θ\n```\n\n### 引导（Classifier-Free Guidance）\n\n> **ε = ε_uncond + w · (ε_cond - ε_uncond)**\n\n其中 w 是引导权重，通常设为 7.5。\n\n---\n\n*下一篇：DDPM 的数学推导细节*"
+    },
+
+    "cuda-basics": {
+        "title": "CUDA 并行编程基础",
+        "category": "GPU",
+        "categoryClass": "blue",
+        "date": "2026-08-01",
+        "readTime": 20,
+        "tags": ["CUDA", "GPU", "并行计算", "线程模型", "内存层次"],
+        "content": "# CUDA 并行编程基础\n\nCUDA 线程模型、内存层次结构、共享内存优化。从 kernel 到 warp 的并行执行机制。\n\n## CUDA 线程层次\n\n```\nThread → Block → Grid\n\nBlock: 最多 1024 个线程\nGrid: 最多 2^31 × 65535 × 65535 个 block\n```\n\n### 线程索引计算\n\n```cuda\n__global__ void matrix_mul(float* A, float* B, float* C, int N) {\n    int col = blockIdx.x * blockDim.x + threadIdx.x;\n    int row = blockIdx.y * blockDim.y + threadIdx.y;\n    \n    if (row < N && col < N) {\n        float sum = 0;\n        for (int k = 0; k < N; ++k) {\n            sum += A[row * N + k] * B[k * N + col];\n        }\n        C[row * N + col] = sum;\n    }\n}\n```\n\n## 内存层次\n\n| 内存类型 | 延迟 | 共享范围 | 生命周期 |\n|---------|------|---------|---------|\n| 寄存器 | 1 cycle | Thread | Kernel |\n| 共享内存 | 1-2 cycles | Block | Kernel |\n| 全局内存 | 400+ cycles | Grid | 永久 |\n| 常量缓存 | ~20 cycles | Grid | 只读 |\n| 纹理缓存 | ~20 cycles | Grid | 只读 |\n\n## 共享内存优化\n\n### 矩阵乘法的共享内存优化\n\n```cuda\n__shared__ float sA[16][16];\n__shared__ float sB[16][16];\n\n__global__ void mat_mul_shared(float* A, float* B, float* C, int N) {\n    int bx = blockIdx.x, by = blockIdx.y;\n    int tx = threadIdx.x, ty = threadIdx.y;\n    \n    int row = by * 16 + ty;\n    int col = bx * 16 + tx;\n    \n    float sum = 0;\n    \n    // Tile-based loading\n    int num_tiles = (N + 15) / 16;\n    for (int t = 0; t < num_tiles; ++t) {\n        int tile_col = t * 16 + tx;\n        int tile_row = t * 16 + ty;\n        \n        if (row < N && tile_col < N)\n            sA[ty][tx] = A[row * N + tile_col];\n        else\n            sA[ty][tx] = 0;\n        \n        if (tile_row < N && col < N)\n            sB[ty][tx] = B[tile_row * N + col];\n        else\n            sB[ty][tx] = 0;\n        \n        __syncthreads();\n        \n        for (int k = 0; k < 16; ++k)\n            sum += sA[ty][k] * sB[k][tx];\n        \n        __syncthreads();\n    }\n    \n    if (row < N && col < N)\n        C[row * N + col] = sum;\n}\n```\n\n## Warp 级操作\n\nWarp 是 32 个线程的最小执行单元。warp-level primitives 可以高效实现归约等操作：\n\n```cuda\n// Warp-level reduction\nfloat warp_reduce_sum(float val) {\n    for (int delta = 16; delta > 0; delta >>= 1) {\n        val += __shfl_down_sync(0xFFFFFFFF, val, delta);\n    }\n    return val;\n}\n```\n\n---\n\n*参考：[CUDA C++ Best Practices Guide](https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/)*"
+    }
+}
+    </script>
+
+    <script src="app.js"></script>
+    <script>
+    /* =========================================================
+       Article Page — Load and render article content
+       ========================================================= */
+    (function () {
+        'use strict';
+
+        // Get article ID from URL
+        function getArticleId() {
+            var params = new URLSearchParams(window.location.search);
+            return params.get('id') || '';
+        }
+
+        // Simple markdown parser (zero dependency)
+        function parseMarkdown(md) {
+            if (!md) return '';
+
+            // Escape HTML
+            md = md.replace(/&/g, '&amp;')
+                   .replace(/</g, '&lt;')
+                   .replace(/>/g, '&gt;');
+
+            // Code blocks (must be first)
+            md = md.replace(/```(\w*)\n([\s\S]*?)```/g, function (match, lang, code) {
+                lang = lang || 'text';
+                code = code.trim();
+                return '<pre><code class="lang-' + lang + '">' + code + '<span class="code-lang">' + lang + '</span></code></pre>';
+            });
+
+            // Inline code
+            md = md.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+            // Headings
+            md = md.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+            md = md.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+            md = md.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+
+            // Bold
+            md = md.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+            // Italic
+            md = md.replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+            // Blockquotes
+            md = md.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>');
+
+            // Tables (simple)
+            md = md.replace(/^\|(.+)\|$/gm, function (match, content) {
+                if (content.match(/^[\s\-:|]+$/)) return '<!--table-sep-->';
+                var cells = content.split('|').map(function (c) {
+                    return c.trim();
+                });
+                var row = '<tr>';
+                cells.forEach(function (cell) {
+                    row += '<td>' + cell + '</td>';
+                });
+                return row + '</tr>';
+            });
+            md = md.replace(/((<tr>.*<\/tr>\n?)+)/g, '<table>$1</table>');
+            md = md.replace(/<!--table-sep-->\n?/g, '');
+
+            // Horizontal rule
+            md = md.replace(/^---$/gm, '<hr>');
+
+            // Unordered list
+            md = md.replace(/^- (.+)$/gm, '<li>$1</li>');
+            md = md.replace(/((<li>.*<\/li>\n?)+)/g, '<ul>$1</ul>');
+
+            // Images (must be before paragraphs)
+            md = md.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">');
+
+            // Links (must be before paragraphs)
+            md = md.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" rel="noopener">$1</a>');
+
+            // Paragraphs
+            md = md.replace(/\n\n/g, '</p><p>');
+            md = md.replace(/\n/g, '<br>');
+
+            // Clean up
+            return '<p>' + md + '</p>';
+        }
+
+        // Syntax highlighting (simple)
+        function highlightCode(code) {
+            // Python keywords
+            var keywords = '\\b(def|class|return|if|else|for|while|import|from|as|in|not|and|or|True|False|None|print|self|lambda|try|except|with|yield|global|nonlocal|assert|del|pass|break|continue)\\b';
+            var numbers = '\\b\\d+\\.?\\d*\\b';
+
+            // Simple replacements (order matters)
+            code = code.replace(/(#.*$)/gm, '<span style="color:#6a9955">$1</span>');  // comments
+            code = code.replace(/(&quot;|&#39;)(.+?)\1/g, '<span style="color:#ce9178">$1$2$1</span>');  // strings
+            code = code.replace(/(".*?"|'.*?')/g, '<span style="color:#ce9178">$1</span>');  // strings
+            code = code.replace(new RegExp(keywords, 'g'), '<span style="color:#569cd6">$1</span>');  // keywords
+
+            return code;
+        }
+
+        // Render article
+        function renderArticle() {
+            var articleId = getArticleId();
+            var container = document.getElementById('article-container');
+            var dataEl = document.getElementById('article-data');
+
+            if (!articleId) {
+                container.innerHTML = '<div class="article-error">' +
+                    '<h2>文章未找到</h2>' +
+                    '<p>请检查链接是否正确</p>' +
+                    '<a href="blog.html" class="link-btn">← 返回博客列表</a>' +
+                    '</div>';
+                return;
+            }
+
+            var articles = {};
+            try {
+                articles = JSON.parse(dataEl.textContent);
+            } catch (e) {
+                console.error('Failed to parse article data:', e);
+            }
+
+            var article = articles[articleId];
+
+            if (!article) {
+                container.innerHTML = '<div class="article-error">' +
+                    '<h2>文章未找到</h2>' +
+                    '<p>文章 "' + articleId + '" 不存在或已被移除。</p>' +
+                    '<a href="blog.html" class="link-btn">← 返回博客列表</a>' +
+                    '</div>';
+                return;
+            }
+
+            // Build article HTML
+            var html = '';
+
+            // Back link
+            html += '<div class="article-header">';
+            html += '<a href="blog.html" class="article-back">← 返回博客列表</a>';
+
+            // Category badge
+            html += '<span class="article-category article-category--' + article.categoryClass + '">' +
+                    article.category + '</span>';
+
+            // Title
+            html += '<h1 class="article-title">' + article.title + '</h1>';
+
+            // Meta
+            html += '<div class="article-meta">';
+            html += '<span>' + article.date + '</span>';
+            html += '<span class="article-divider"></span>';
+            html += '<span>阅读 ' + article.readTime + ' 分钟</span>';
+            html += '</div>';
+            html += '</div>';
+
+            // Content
+            var parsedContent = parseMarkdown(article.content);
+            html += '<div class="article-content">' + parsedContent + '</div>';
+
+            // Tags
+            if (article.tags && article.tags.length > 0) {
+                html += '<div class="article-tags">';
+                article.tags.forEach(function (tag) {
+                    html += '<span class="article-tag">' + tag + '</span>';
+                });
+                html += '</div>';
+            }
+
+            // Article navigation (prev/next)
+            var articleIds = Object.keys(articles);
+            var currentIndex = articleIds.indexOf(articleId);
+            if (currentIndex !== -1 && articleIds.length > 1) {
+                html += '<div class="article-nav">';
+                // currentIndex + 1 = older article = "上一篇" (previous/newer time-wise)
+                if (currentIndex < articleIds.length - 1) {
+                    var prev = articles[articleIds[currentIndex + 1]];
+                    html += '<div class="article-nav-item">';
+                    html += '<div class="article-nav-label">上一篇</div>';
+                    html += '<a href="?id=' + articleIds[currentIndex + 1] + '" class="article-nav-title">' + prev.title + '</a>';
+                    html += '</div>';
+                }
+                // currentIndex - 1 = newer article = "下一篇" (next/newer time-wise)
+                if (currentIndex > 0) {
+                    var next = articles[articleIds[currentIndex - 1]];
+                    html += '<div class="article-nav-item next">';
+                    html += '<div class="article-nav-label">下一篇</div>';
+                    html += '<a href="?id=' + articleIds[currentIndex - 1] + '" class="article-nav-title">' + next.title + '</a>';
+                    html += '</div>';
+                }
+                html += '</div>';
+            }
+
+            container.innerHTML = html;
+        }
+
+        renderArticle();
+    })();
+    </script>
+</body>
+</html>

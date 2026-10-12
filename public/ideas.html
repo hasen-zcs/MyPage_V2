@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Hasen 的思考 — 关于 AGI、AI 通信、知识网络等方向的探索。">
+    <meta name="theme-color" content="#0b1110">
+    <!-- Open Graph / Social -->
+    <meta property="og:title" content="Ideas — Hasen">
+    <meta property="og:description" content="关于 AGI、AI 通信、知识网络等方向的探索。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://hasen.dev/ideas.html">
+    <meta property="og:image" content="https://hasen.dev/assets/og-ideas.png">
+    <meta property="og:locale" content="zh_CN">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Ideas — Hasen">
+    <meta name="twitter:description" content="关于 AGI、AI 通信、知识网络等方向的探索。">
+    <meta name="twitter:image" content="https://hasen.dev/assets/og-ideas.png">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
+    <link rel="manifest" href="manifest.json">
+    <title>Ideas — Hasen</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* Ideas page specific */
+        .ideas-page-layout {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px 80px;
+        }
+
+        .ideas-intro {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .ideas-intro p {
+            font-size: 15px;
+            color: var(--text-secondary);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .idea-full-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            margin-bottom: 24px;
+            transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), border-color 0.2s var(--ease);
+        }
+
+        .idea-full-card:hover {
+            border-color: var(--border-strong);
+            box-shadow: var(--shadow);
+        }
+
+        .idea-full-num {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--text-muted);
+            opacity: 0.15;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .idea-full-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--green);
+        }
+
+        .idea-full-content {
+            font-size: 14px;
+            line-height: 1.75;
+            color: var(--text);
+        }
+
+        .idea-full-content p {
+            margin-bottom: 12px;
+        }
+
+        .idea-full-content ul {
+            margin: 12px 0;
+            padding-left: 20px;
+        }
+
+        .idea-full-content li {
+            margin-bottom: 6px;
+        }
+
+        .idea-full-content blockquote {
+            border-left: 3px solid var(--green);
+            padding: 12px 20px;
+            margin: 16px 0;
+            background: var(--green-glow);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .idea-full-content code {
+            font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+            font-size: 0.9em;
+            background: var(--surface-hover);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 2px 6px;
+            color: var(--green);
+        }
+
+        .idea-full-content pre {
+            margin: 16px 0;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .idea-full-content pre code {
+            display: block;
+            padding: 16px 20px;
+            background: var(--surface-hover);
+            border: none;
+            font-size: 13px;
+            line-height: 1.7;
+            overflow-x: auto;
+            color: var(--text);
+        }
+
+        .idea-full-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .idea-status {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+
+        .idea-status.active {
+            color: var(--green);
+            background: var(--green-glow);
+            border: 1px solid var(--green-glow-strong);
+        }
+
+        .idea-status.dormant {
+            color: var(--text-muted);
+            background: var(--surface-hover);
+            border: 1px solid var(--border);
+        }
+
+        .idea-date {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .idea-expand-btn {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--green);
+            cursor: pointer;
+            border: none;
+            background: none;
+            padding: 0;
+            transition: opacity 0.2s;
+        }
+
+        .idea-expand-btn:hover {
+            opacity: 0.7;
+        }
+
+        .idea-expand-content {
+            display: none;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .idea-expand-content.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .idea-full-card {
+                padding: 24px;
+            }
+
+            .idea-full-num {
+                font-size: 36px;
+            }
+
+            .idea-full-title {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .idea-full-card {
+                padding: 20px;
+            }
+
+            .idea-full-num {
+                font-size: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== Navbar ==================== -->
+    <nav class="navbar" id="navbar">
+        <a href="home.html" class="logo">
+            <span class="logo-dot"></span>
+            hasen
+        </a>
+        <ul class="nav-links">
+            <li><a href="home.html">首页</a></li>
+            <li><a href="blog.html">博客</a></li>
+            <li><a href="projects.html">项目</a></li>
+            <li><a href="ideas.html" class="active">思考</a></li>
+            <li><a href="about.html">关于</a></li>
+        </ul>
+        <div class="nav-actions">
+            <button class="theme-toggle" id="theme-toggle" aria-label="切换主题">
+                <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+            <button class="hamburger" id="hamburger" aria-label="菜单">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ==================== Mobile Nav Overlay ==================== -->
+    <div class="mobile-nav" id="mobile-nav">
+        <button class="theme-toggle mobile-theme-toggle" id="theme-toggle-mobile" aria-label="切换主题">
+            <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <a href="home.html">首页</a>
+        <a href="blog.html">博客</a>
+        <a href="projects.html">项目</a>
+        <a href="ideas.html" class="active">思考</a>
+        <a href="about.html">关于</a>
+    </div>
+
+    <!-- ==================== Page Banner ==================== -->
+    <section class="page-banner">
+        <div class="banner-bg-pattern"></div>
+        <div class="banner-content">
+            <h1>Ideas</h1>
+            <p>正在思考的方向 — 记录每一个想法</p>
+        </div>
+    </section>
+
+    <!-- ==================== Ideas Content ==================== -->
+    <main class="main">
+        <div class="ideas-page-layout">
+
+            <div class="ideas-intro">
+                <p>这里是我正在思考的一些方向。有些已经有初步的想法，有些还在探索中。</p>
+            </div>
+
+            <!-- Idea 01 -->
+            <div class="idea-full-card">
+                <div class="idea-full-num">01</div>
+                <h2 class="idea-full-title">AGI 是否应该是模块化的？</h2>
+                <div class="idea-full-content">
+                    <p>一个核心猜想：AGI 可能需要三个层次的架构 — 稳定的智力核心、能力网络、动态知识网络。</p>
+                    
+                    <blockquote>
+                        如果智力是 AGI 的核心，那么它应该是稳定的。能力（语言、推理、视觉）是外围的、可替换的。
+                    </blockquote>
+
+                    <p><strong>三个层次：</strong></p>
+                    <ul>
+                        <li><strong>智力核心（Core Intelligence）</strong>：推理、规划、元学习等底层能力。这些应该相对稳定，不随任务变化。</li>
+                        <li><strong>能力网络（Ability Network）</strong>：语言、视觉、音频、代码等模块化能力。可以独立发展和替换。</li>
+                        <li><strong>动态知识网络（Dynamic Knowledge）</strong>：持续学习过程中积累的知识。随时间增长，不遗忘。</li>
+                    </ul>
+
+                    <p><strong>关键问题：</strong></p>
+                    <ul>
+                        <li>如何定义「智力核心」？它的边界在哪里？</li>
+                        <li>能力模块之间如何高效通信？</li>
+                        <li>知识网络如何实现持续学习而不灾难性遗忘？</li>
+                    </ul>
+                </div>
+                <div class="idea-full-meta">
+                    <span class="idea-status active">● 活跃思考中</span>
+                    <span class="idea-date">始于 2026-07</span>
+                </div>
+            </div>
+
+            <!-- Idea 02 -->
+            <div class="idea-full-card">
+                <div class="idea-full-num">02</div>
+                <h2 class="idea-full-title">AI 能否脱离自然语言通信？</h2>
+                <div class="idea-full-content">
+                    <p>当前 AI 系统之间的通信几乎完全依赖自然语言（或离散 token）。但如果 AI 之间能够直接交换高维表示，会怎样？</p>
+
+                    <p><strong>核心问题：</strong></p>
+                    <ul>
+                        <li>自然语言是否是信息交换的最优表示？</li>
+                        <li>高维向量空间中的「语义对齐」是否可能？</li>
+                        <li>如果两个 AI 共享相同的表示空间，通信效率会提升多少？</li>
+                    </ul>
+
+                    <p><strong>初步猜想：</strong></p>
+                    <p>在理想情况下，AI 之间的通信可以简化为：<code>send(z_A) → receive(z_B)</code>，其中 z 是高维向量。这需要：</p>
+                    <ul>
+                        <li>统一的表示学习框架</li>
+                        <li>跨模型的语义对齐机制</li>
+                        <li>压缩与解压缩的无损（或可控损）编码</li>
+                    </ul>
+
+                    <blockquote>
+                        人类的语言是低带宽的「压缩器」，把高维思维压缩成低维符号。如果 AI 不需要压缩，带宽可能提升 1000 倍。
+                    </blockquote>
+                </div>
+                <div class="idea-full-meta">
+                    <span class="idea-status dormant">○ 暂停探索</span>
+                    <span class="idea-date">始于 2026-06</span>
+                </div>
+            </div>
+
+            <!-- Idea 03 -->
+            <div class="idea-full-card">
+                <div class="idea-full-num">03</div>
+                <h2 class="idea-full-title">关于知识网络</h2>
+                <div class="idea-full-content">
+                    <p>如何构建个人知识网络，让学习产生复利效应？</p>
+
+                    <p><strong>核心理念：</strong></p>
+                    <ul>
+                        <li>知识不是孤立的点，而是相互连接的网络</li>
+                        <li>学习的效果取决于知识网络的结构，而非单个节点的数量</li>
+                        <li>跨领域连接产生最大的创新潜力</li>
+                    </ul>
+
+                    <p><strong>三层知识体系：</strong></p>
+                    <ul>
+                        <li><strong>基础层</strong>：数学、物理、计算机科学基础</li>
+                        <li><strong>专业层</strong>：深度学习、GPU 计算、计算机视觉</li>
+                        <li><strong>交叉层</strong>：哲学、认知科学、系统设计</li>
+                    </ul>
+
+                    <p><strong>连接方式：</strong></p>
+                    <ul>
+                        <li>通过博客记录学习过程，形成可搜索的知识链</li>
+                        <li>用标签系统关联不同领域的概念</li>
+                        <li>定期回顾和重构知识网络</li>
+                    </ul>
+                </div>
+                <div class="idea-full-meta">
+                    <span class="idea-status active">● 活跃思考中</span>
+                    <span class="idea-date">始于 2026-05</span>
+                </div>
+            </div>
+
+            <!-- Idea 04 -->
+            <div class="idea-full-card">
+                <div class="idea-full-num">04</div>
+                <h2 class="idea-full-title">个人知识库 vs 公开博客</h2>
+                <div class="idea-full-content">
+                    <p>是否应该区分「私人知识」和「公开博客」？两者各有其价值，但管理成本也不同。</p>
+
+                    <p><strong>思考：</strong></p>
+                    <ul>
+                        <li>私人知识：快速记录、不完整、可随意修改</li>
+                        <li>公开博客：经过整理、有结构、可被他人利用</li>
+                        <li>两者之间可能存在一个「中间态」：半私密、可控制可见性</li>
+                    </ul>
+
+                    <p>这可能是未来需要探索的方向 — 一个介于笔记和博客之间的知识层级系统。</p>
+                </div>
+                <div class="idea-full-meta">
+                    <span class="idea-status dormant">○ 待深入</span>
+                    <span class="idea-date">始于 2026-04</span>
+                </div>
+            </div>
+
+            <!-- Idea 05 -->
+            <div class="idea-full-card">
+                <div class="idea-full-num">05</div>
+                <h2 class="idea-full-title">代码即思考</h2>
+                <div class="idea-full-content">
+                    <p>是否可以通过「写代码」来代替「写笔记」来记录学习过程？</p>
+
+                    <p><strong>核心想法：</strong></p>
+                    <ul>
+                        <li>实现一个算法就是最好的理解方式</li>
+                        <li>代码仓库中的 commit message 可以成为学习笔记</li>
+                        <li>交互式笔记本（Jupyter-like）可以作为博客的增强形式</li>
+                    </ul>
+
+                    <p><strong>挑战：</strong></p>
+                    <ul>
+                        <li>代码的可读性 vs 简洁性</li>
+                        <li>非技术读者无法利用代码形式的知识</li>
+                        <li>版本控制 vs 知识迭代的关系</li>
+                    </ul>
+                </div>
+                <div class="idea-full-meta">
+                    <span class="idea-status dormant">○ 待深入</span>
+                    <span class="idea-date">始于 2026-03</span>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ==================== Footer ==================== -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <span>© 2026 Hasen</span>
+            <span>Built with HTML · CSS · JavaScript</span>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

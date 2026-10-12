@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b1110">
+    <title>管理后台 — Hasen</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* ===== Admin specific ===== */
+        * { box-sizing: border-box; }
+        html, body { height: 100%; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* Login overlay */
+        .admin-login {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(160deg, #0a1f18 0%, #0f2e25 40%, #0a1a14 100%);
+        }
+
+        .login-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 40px;
+            width: 400px;
+            max-width: 90vw;
+            text-align: center;
+        }
+
+        .login-card h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .login-card p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .login-card .hint {
+            background: var(--green-glow);
+            border: 1px solid var(--green-glow-strong);
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            font-size: 12px;
+            text-align: left;
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .login-card .hint a {
+            color: var(--green);
+        }
+
+        .login-card input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--surface-hover);
+            color: var(--text);
+            font-size: 14px;
+            outline: none;
+            margin-bottom: 12px;
+        }
+
+        .login-card input:focus {
+            box-shadow: 0 0 0 3px var(--green-glow-strong);
+            border-color: var(--green);
+        }
+
+        .login-card input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 20px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--surface);
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            border-color: var(--border-strong);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-green {
+            background: var(--green);
+            color: #fff;
+            border-color: var(--green);
+        }
+
+        .btn-green:hover {
+            opacity: 0.85;
+        }
+
+        .btn-danger {
+            background: transparent;
+            color: var(--coral);
+            border-color: var(--coral);
+        }
+
+        .btn-danger:hover {
+            background: rgba(217, 91, 67, 0.1);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        /* Admin layout */
+        .admin-layout {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .admin-layout.active {
+            display: flex;
+        }
+
+        .admin-sidebar {
+            width: 220px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 20px 0;
+            flex-shrink: 0;
+        }
+
+        .admin-sidebar .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            padding: 0 20px;
+            margin-bottom: 24px;
+            color: var(--text);
+        }
+
+        .admin-sidebar .logo-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+        }
+
+        .admin-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .admin-nav-item:hover {
+            color: var(--text);
+            background: var(--surface-hover);
+        }
+
+        .admin-nav-item.active {
+            color: var(--green);
+            background: var(--green-glow);
+            border-right: 3px solid var(--green);
+        }
+
+        .admin-nav-item .nav-icon {
+            width: 18px;
+            text-align: center;
+        }
+
+        .admin-main {
+            flex: 1;
+            padding: 32px;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+
+        .admin-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .admin-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        /* List view */
+        .admin-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .admin-list-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 18px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            transition: all 0.2s;
+        }
+
+        .admin-list-item:hover {
+            border-color: var(--border-strong);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .item-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .item-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 2px;
+            color: var(--text);
+        }
+
+        .item-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        /* Editor */
+        .admin-editor {
+            display: none;
+        }
+
+        .admin-editor.active {
+            display: block;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .editor-field {
+            margin-bottom: 16px;
+        }
+
+        .editor-field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .editor-field input,
+        .editor-field select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--surface-hover);
+            color: var(--text);
+            font-size: 14px;
+            outline: none;
+        }
+
+        .editor-field input:focus,
+        .editor-field select:focus {
+            box-shadow: 0 0 0 3px var(--green-glow-strong);
+            border-color: var(--green);
+        }
+
+        .editor-field select {
+            cursor: pointer;
+        }
+
+        .editor-row {
+            display: flex;
+            gap: 16px;
+        }
+
+        .editor-row .editor-field {
+            flex: 1;
+        }
+
+        .editor-textarea {
+            width: 100%;
+            min-height: 400px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--surface-hover);
+            color: var(--text);
+            font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            resize: vertical;
+            outline: none;
+            tab-size: 4;
+        }
+
+        .editor-textarea:focus {
+            box-shadow: 0 0 0 3px var(--green-glow-strong);
+            border-color: var(--green);
+        }
+
+        .editor-preview {
+            margin-top: 16px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--surface);
+            min-height: 200px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .editor-preview h1, .editor-preview h2, .editor-preview h3 {
+            margin: 16px 0 8px;
+        }
+
+        .editor-preview p {
+            margin-bottom: 8px;
+            line-height: 1.7;
+        }
+
+        .editor-preview code {
+            font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+            background: var(--surface-hover);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 0.9em;
+        }
+
+        .editor-preview pre {
+            margin: 12px 0;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            overflow-x: auto;
+        }
+
+        .editor-preview pre code {
+            display: block;
+            padding: 16px;
+            background: var(--surface-hover);
+            border: none;
+        }
+
+        .editor-preview blockquote {
+            border-left: 3px solid var(--green);
+            padding: 8px 16px;
+            margin: 12px 0;
+            background: var(--green-glow);
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .editor-preview ul, .editor-preview ol {
+            padding-left: 24px;
+            margin: 8px 0;
+        }
+
+        .editor-preview li {
+            margin-bottom: 4px;
+        }
+
+        .editor-preview table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 12px 0;
+        }
+
+        .editor-preview th, .editor-preview td {
+            border: 1px solid var(--border);
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        .editor-preview th {
+            background: var(--surface-hover);
+            font-weight: 600;
+        }
+
+        /* Tags input */
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--surface-hover);
+            min-height: 42px;
+            cursor: text;
+        }
+
+        .tags-container:focus-within {
+            box-shadow: 0 0 0 3px var(--green-glow-strong);
+            border-color: var(--green);
+        }
+
+        .tag-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            background: var(--green-glow);
+            border: 1px solid var(--green-glow-strong);
+            border-radius: 12px;
+            font-size: 12px;
+            color: var(--green);
+            font-weight: 500;
+        }
+
+        .tag-chip .tag-remove {
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1;
+            opacity: 0.6;
+        }
+
+        .tag-chip .tag-remove:hover {
+            opacity: 1;
+        }
+
+        .tag-input {
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 13px;
+            color: var(--text);
+            flex: 1;
+            min-width: 60px;
+        }
+
+        .tag-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Status badge */
+        .status-badge-small {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-badge-small.active {
+            color: var(--green);
+            background: var(--green-glow);
+        }
+
+        .status-badge-small.completed {
+            color: var(--blue);
+            background: rgba(59, 141, 212, 0.08);
+        }
+
+        .status-badge-small.dormant,
+        .status-badge-small.archived {
+            color: var(--text-muted);
+            background: var(--surface-hover);
+        }
+
+        /* Category badge */
+        .cat-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+        }
+
+        .cat-badge.blue { color: var(--blue); background: rgba(59, 141, 212, 0.08); }
+        .cat-badge.amber { color: var(--amber); background: rgba(232, 168, 56, 0.08); }
+        .cat-badge.coral { color: var(--coral); background: rgba(217, 91, 67, 0.08); }
+        .cat-badge.green { color: var(--green); background: var(--green-glow); }
+        .cat-badge.violet { color: var(--violet); background: rgba(123, 97, 174, 0.08); }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 12px 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-lg);
+            font-size: 14px;
+            z-index: 200;
+            display: none;
+        }
+
+        .toast.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .toast.error {
+            border-color: var(--coral);
+            color: var(--coral);
+        }
+
+        .toast.success {
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* About editor */
+        .about-editor textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--surface-hover);
+            color: var(--text);
+            font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+            font-size: 14px;
+            line-height: 1.7;
+            resize: vertical;
+            outline: none;
+        }
+
+        .about-editor textarea:focus {
+            box-shadow: 0 0 0 3px var(--green-glow-strong);
+            border-color: var(--green);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                width: 60px;
+            }
+            .admin-sidebar .logo span,
+            .admin-nav-item span {
+                display: none;
+            }
+            .admin-sidebar .logo {
+                justify-content: center;
+            }
+            .admin-nav-item {
+                justify-content: center;
+                padding: 12px;
+            }
+            .admin-main {
+                padding: 20px 16px;
+            }
+            .editor-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== Login Screen ==================== -->
+    <div class="admin-login" id="admin-login">
+        <div class="login-card">
+            <h1>✦ 管理后台</h1>
+            <p>Hasen Personal Website CMS</p>
+            <div class="hint">
+                <strong>🔑 如何获取 Token：</strong><br>
+                1. 打开 <a href="https://github.com/settings/tokens" target="_blank">GitHub Settings → Developer settings → Personal access tokens</a><br>
+                2. 点击 "Generate new token (classic)"<br>
+                3. 勾选 <strong>repo</strong> 权限<br>
+                4. 复制 token 粘贴到下方
+            </div>
+            <input type="text" id="repo-url" placeholder="仓库地址 (如: hasen-dev/my-website)" value="hasen-dev/hasen.dev">
+            <input type="password" id="pat-input" placeholder="GitHub Personal Access Token" autocomplete="off">
+            <button class="btn btn-green" id="login-btn" style="width:100%">
+                登录并开始管理
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== Admin Interface ==================== -->
+    <div class="admin-layout" id="admin-layout">
+        <!-- Sidebar -->
+        <div class="admin-sidebar">
+            <div class="logo">
+                <span class="logo-dot"></span>
+                <span>Hasen CMS</span>
+            </div>
+            <div class="admin-nav-item active" data-module="blog">
+                <span class="nav-icon">📝</span>
+                <span>博客</span>
+            </div>
+            <div class="admin-nav-item" data-module="projects">
+                <span class="nav-icon">📦</span>
+                <span>项目</span>
+            </div>
+            <div class="admin-nav-item" data-module="ideas">
+                <span class="nav-icon">💡</span>
+                <span>思考</span>
+            </div>
+            <div class="admin-nav-item" data-module="about">
+                <span class="nav-icon">👤</span>
+                <span>关于</span>
+            </div>
+            <div class="admin-nav-item" id="logout-btn" style="margin-top:auto; border-top:1px solid var(--border); padding-top:12px; color:var(--coral)">
+                <span class="nav-icon">🚪</span>
+                <span>退出</span>
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="admin-main">
+
+            <!-- ===== Blog Module ===== -->
+            <div class="module active" id="module-blog">
+                <div class="admin-header">
+                    <h2>📝 博客管理</h2>
+                    <button class="btn btn-green" onclick="openEditor('blog')">+ 新建文章</button>
+                </div>
+                <div class="admin-list" id="blog-list"></div>
+            </div>
+
+            <!-- Blog Editor -->
+            <div class="admin-editor" id="editor-blog">
+                <div class="admin-header">
+                    <h2 id="blog-editor-title">新建文章</h2>
+                    <div style="display:flex;gap:8px;">
+                        <button class="btn" onclick="closeEditor('blog')">取消</button>
+                        <button class="btn btn-green" onclick="saveBlog()">保存</button>
+                    </div>
+                </div>
+                <div class="editor-field">
+                    <label>文章 ID（英文，用于链接）</label>
+                    <input type="text" id="blog-id" placeholder="如: my-new-post">
+                </div>
+                <div class="editor-row">
+                    <div class="editor-field">
+                        <label>标题</label>
+                        <input type="text" id="blog-title" placeholder="文章标题">
+                    </div>
+                    <div class="editor-field">
+                        <label>分类</label>
+                        <select id="blog-category">
+                            <option value="GPU">GPU</option>
+                            <option value="Transformer">Transformer</option>
+                            <option value="AI">AI</option>
+                            <option value="Dev">Dev</option>
+                        </select>
+                    </div>
+                    <div class="editor-field">
+                        <label>分类颜色</label>
+                        <select id="blog-color">
+                            <option value="blue">蓝色</option>
+                            <option value="amber">琥珀</option>
+                            <option value="coral">珊瑚</option>
+                            <option value="green">绿色</option>
+                            <option value="violet">紫色</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="editor-row">
+                    <div class="editor-field">
+                        <label>日期</label>
+                        <input type="date" id="blog-date">
+                    </div>
+                    <div class="editor-field">
+                        <label>预计阅读时间（分钟）</label>
+                        <input type="number" id="blog-readtime" value="5" min="1">
+                    </div>
+                </div>
+                <div class="editor-field">
+                    <label>标签（回车添加）</label>
+                    <div class="tags-container" id="blog-tags">
+                        <input type="text" class="tag-input" id="blog-tag-input" placeholder="输入标签后回车">
+                    </div>
+                </div>
+                <div class="editor-field">
+                    <label>内容（Markdown）</label>
+                    <textarea class="editor-textarea" id="blog-content" placeholder="使用 Markdown 编写内容..."></textarea>
+                </div>
+                <div class="editor-field">
+                    <label>预览</label>
+                    <div class="editor-preview" id="blog-preview"></div>
+                </div>
+            </div>
+
+            <!-- ===== Projects Module ===== -->
+            <div class="module" id="module-projects">
+                <div class="admin-header">
+                    <h2>📦 项目管理</h2>
+                    <button class="btn btn-green" onclick="openEditor('projects')">+ 新建项目</button>
+                </div>
+                <div class="admin-list" id="projects-list"></div>
+            </div>
+
+            <!-- Project Editor -->
+            <div class="admin-editor" id="editor-projects">
+                <div class="admin-header">
+                    <h2 id="projects-editor-title">新建项目</h2>
+                    <div style="display:flex;gap:8px;">
+                        <button class="btn" onclick="closeEditor('projects')">取消</button>
+                        <button class="btn btn-green" onclick="saveProject()">保存</button>
+                    </div>
+                </div>
+                <div class="editor-row">
+                    <div class="editor-field">
+                        <label>项目 ID（英文）</label>
+                        <input type="text" id="project-id" placeholder="如: my-new-project">
+                    </div>
+                    <div class="editor-field">
+                        <label>状态</label>
+                        <select id="project-status">
+                            <option value="active">进行中</option>
+                            <option value="completed">已完成</option>
+                            <option value="archived">已归档</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="editor-row">
+                    <div class="editor-field">
+                        <label>标题</label>
+                        <input type="text" id="project-title" placeholder="项目名称">
+                    </div>
+                    <div class="editor-field">
+                        <label>分类</label>
+                        <input type="text" id="project-category" placeholder="如: AI · Computer Vision">
+                    </div>
+                </div>
+                <div class="editor-row">
+                    <div class="editor-field">
+                        <label>颜色</label>
+                        <select id="project-color">
+                            <option value="green">绿色</option>
+                            <option value="blue">蓝色</option>
+                            <option value="amber">琥珀</option>
+                            <option value="violet">紫色</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="editor-field">
+                    <label>描述</label>
+                    <input type="text" id="project-desc" placeholder="项目描述">
+                </div>
+                <div class="editor-row">
+                    <div class="editor-field">
+                        <label>GitHub 链接</label>
+                        <input type="url" id="project-github" placeholder="https://github.com/...">
+                    </div>
+                    <div class="editor-field">
+                        <label>Demo 链接（可选）</label>
+                        <input type="url" id="project-demo" placeholder="https://demo.hasen.dev/...">
+                    </div>
+                </div>
+                <div class="editor-field">
+                    <label>技术栈（逗号分隔）</label>
+                    <input type="text" id="project-techs" placeholder="Python, PyTorch, FastAPI">
+                </div>
+            </div>
+
+            <!-- ===== Ideas Module ===== -->
+            <div class="module" id="module-ideas">
+                <div class="admin-header">
+                    <h2>💡 思考管理</h2>
+                    <button class="btn btn-green" onclick="openEditor('ideas')">+ 新建思考</button>
+                </div>
+                <div class="admin-list" id="ideas-list"></div>
+            </div>
+
+            <!-- Idea Editor -->
+            <div class="admin-editor" id="editor-ideas">
+                <div class="admin-header">
+                    <h2 id="ideas-editor-title">新建思考</h2>
+                    <div style="display:flex;gap:8px;">
+                        <button class="btn" onclick="closeEditor('ideas')">取消</button>
+                        <button class="btn btn-green" onclick="saveIdea()">保存</button>
+                    </div>
+                </div>
+                <div class="editor-field">
+                    <label>标题</label>
+                    <input type="text" id="idea-title" placeholder="思考标题">
+                </div>
+                <div class="editor-row">
+                    <div class="editor-field">
+                        <label>状态</label>
+                        <select id="idea-status">
+                            <option value="active">活跃思考中</option>
+                            <option value="dormant">暂停探索</option>
+                        </select>
+                    </div>
+                    <div class="editor-field">
+                        <label>日期（YYYY-MM）</label>
+                        <input type="month" id="idea-date">
+                    </div>
+                </div>
+                <div class="editor-field">
+                    <label>内容（Markdown）</label>
+                    <textarea class="editor-textarea" id="idea-content" placeholder="记录你的思考..."></textarea>
+                </div>
+                <div class="editor-field">
+                    <label>预览</label>
+                    <div class="editor-preview" id="idea-preview"></div>
+                </div>
+            </div>
+
+            <!-- ===== About Module ===== -->
+            <div class="module" id="module-about">
+                <div class="admin-header">
+                    <h2>👤 关于页管理</h2>
+                </div>
+                <div class="about-editor">
+                    <div class="editor-field">
+                        <label>about.html 文件内容（直接编辑 HTML）</label>
+                        <textarea id="about-content" placeholder="编辑 about.html 的 HTML 内容..."></textarea>
+                    </div>
+                    <button class="btn btn-green" onclick="saveAbout()">保存更改</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+    /* =========================================================
+       Hasen CMS — GitHub API Content Management
+       ========================================================= */
+    (function () {
+        'use strict';
+
+        // ===== State =====
+        let state = {
+            owner: '',
+            repo: '',
+            token: '',
+            currentModule: 'blog',
+            editingItem: null  // { id, index } or null
+        };
+
+        // ===== Init =====
+        function init() {
+            // Check saved token
+            const saved = localStorage.getItem('hasen_cms_token');
+            const savedRepo = localStorage.getItem('hasen_cms_repo');
+            if (saved) {
+                state.token = saved;
+                state.owner = savedRepo ? savedRepo.split('/')[0] : '';
+                state.repo = savedRepo ? savedRepo.split('/')[1] : '';
+                if (state.owner && state.repo) {
+                    showAdmin();
+                    return;
+                }
+            }
+            // Show login
+            document.getElementById('admin-login').style.display = 'flex';
+        }
+
+        // ===== Navigation =====
+        function showAdmin() {
+            document.getElementById('admin-login').style.display = 'none';
+            document.getElementById('admin-layout').classList.add('active');
+            loadModule('blog');
+        }
+
+        function hideAdmin() {
+            document.getElementById('admin-login').style.display = 'flex';
+            document.getElementById('admin-layout').classList.remove('active');
+        }
+
+        // Module switching
+        document.querySelectorAll('.admin-nav-item[data-module]').forEach(el => {
+            el.addEventListener('click', () => loadModule(el.dataset.module));
+        });
+
+        function loadModule(module) {
+            state.currentModule = module;
+            state.editingItem = null;
+
+            // Update nav
+            document.querySelectorAll('.admin-nav-item[data-module]').forEach(el => {
+                el.classList.toggle('active', el.dataset.module === module);
+            });
+
+            // Hide all modules and editors
+            document.querySelectorAll('.module').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.admin-editor').forEach(el => el.classList.remove('active'));
+
+            // Show module
+            const moduleEl = document.getElementById('module-' + module);
+            if (moduleEl) moduleEl.classList.add('active');
+
+            // Load data
+            if (module === 'blog') loadBlogList();
+            else if (module === 'projects') loadProjectsList();
+            else if (module === 'ideas') loadIdeasList();
+            else if (module === 'about') loadAbout();
+        }
+
+        // ===== Login =====
+        document.getElementById('login-btn').addEventListener('click', async function () {
+            const repoUrl = document.getElementById('repo-url').value.trim();
+            const token = document.getElementById('pat-input').value.trim();
+
+            if (!repoUrl || !token) {
+                showToast('请填写仓库地址和 Token', 'error');
+                return;
+            }
+
+            const parts = repoUrl.split('/');
+            if (parts.length < 2) {
+                showToast('仓库格式错误，应为 owner/repo', 'error');
+                return;
+            }
+
+            state.owner = parts[parts.length - 2];
+            state.repo = parts[parts.length - 1];
+            state.token = token;
+
+            // Test connection
+            try {
+                const res = await fetch(`https://api.github.com/repos/${state.owner}/${state.repo}`, {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                localStorage.setItem('hasen_cms_token', token);
+                localStorage.setItem('hasen_cms_repo', repoUrl);
+                showAdmin();
+                showToast('登录成功！', 'success');
+            } catch (e) {
+                showToast('连接失败：' + e.message, 'error');
+            }
+        });
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', function () {
+            localStorage.removeItem('hasen_cms_token');
+            localStorage.removeItem('hasen_cms_repo');
+            state.token = '';
+            state.owner = '';
+            state.repo = '';
+            hideAdmin();
+            document.getElementById('pat-input').value = '';
+            showToast('已退出', 'success');
+        });
+
+        // ===== Data Loading =====
+        async function fetchData(file) {
+            const url = `https://api.github.com/repos/${state.owner}/${state.repo}/contents/public/data/${file}`;
+            const res = await fetch(url, {
+                headers: { 'Authorization': 'Bearer ' + state.token }
+            });
+            if (res.status === 404) return { data: [], sha: null };
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const json = await res.json();
+            const content = decodeBase64(json.content);
+            return { data: JSON.parse(content), sha: json.sha };
+        }
+
+        function decodeBase64(str) {
+            try { return decodeURIComponent(escape(atob(str))); }
+            catch (e) { return ''; }
+        }
+
+        async function saveData(file, data, sha) {
+            const url = `https://api.github.com/repos/${state.owner}/${state.repo}/contents/public/data/${file}`;
+            let content = JSON.stringify(data, null, 2);
+
+            const params = {
+                message: state.editingItem
+                    ? `Update ${file}: ${state.editingItem.title || 'item'}`
+                    : `Add ${file}: new item`,
+                content: btoa(unescape(encodeURIComponent(content))),
+                branch: 'main'
+            };
+            if (sha) params.sha = sha;
+
+            const method = state.editingItem && state.editingItem.id ? 'PUT' : 'POST';
+
+            const res = await fetch(url, {
+                method: method,
+                headers: {
+                    'Authorization': 'Bearer ' + state.token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(params)
+            });
+
+            if (!res.ok) {
+                const errText = await res.text();
+                throw new Error(`HTTP ${res.status}: ${errText}`);
+            }
+            return res.json();
+        }
+
+        // ===== Blog =====
+        let blogData = [];
+        let blogSha = null;
+
+        async function loadBlogList() {
+            const result = await fetchData('blog.json');
+            blogData = result.data;
+            blogSha = result.sha;
+            renderBlogList();
+        }
+
+        function renderBlogList() {
+            const container = document.getElementById('blog-list');
+            if (blogData.length === 0) {
+                container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted)">暂无文章，点击"新建文章"开始</div>';
+                return;
+            }
+            container.innerHTML = blogData.map((item, i) => `
+                <div class="admin-list-item">
+                    <div class="item-info">
+                        <div class="item-title">
+                            <span class="cat-badge ${item.categoryClass}">${item.category}</span>
+                            ${item.title}
+                        </div>
+                        <div class="item-meta">${item.date} · ${item.readTime} 分钟阅读 · ${item.tags ? item.tags.length : 0} 个标签</div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-sm" onclick="editBlog(${i})">编辑</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteBlog(${i})">删除</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openEditor(type) {
+            state.editingItem = null;
+            document.querySelectorAll('.module').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.admin-editor').forEach(el => el.classList.remove('active'));
+            document.getElementById('editor-' + type).classList.add('active');
+
+            if (type === 'blog') {
+                document.getElementById('blog-editor-title').textContent = '新建文章';
+                document.getElementById('blog-id').value = '';
+                document.getElementById('blog-title').value = '';
+                document.getElementById('blog-category').value = 'GPU';
+                document.getElementById('blog-color').value = 'blue';
+                document.getElementById('blog-date').value = new Date().toISOString().split('T')[0];
+                document.getElementById('blog-readtime').value = 5;
+                clearTags('blog');
+                document.getElementById('blog-content').value = '';
+                updatePreview('blog');
+            } else if (type === 'projects') {
+                document.getElementById('projects-editor-title').textContent = '新建项目';
+                document.getElementById('project-id').value = '';
+                document.getElementById('project-title').value = '';
+                document.getElementById('project-category').value = '';
+                document.getElementById('project-status').value = 'active';
+                document.getElementById('project-color').value = 'green';
+                document.getElementById('project-desc').value = '';
+                document.getElementById('project-github').value = '';
+                document.getElementById('project-demo').value = '';
+                document.getElementById('project-techs').value = '';
+            } else if (type === 'ideas') {
+                document.getElementById('ideas-editor-title').textContent = '新建思考';
+                document.getElementById('idea-title').value = '';
+                document.getElementById('idea-status').value = 'active';
+                document.getElementById('idea-date').value = new Date().toISOString().slice(0, 7);
+                document.getElementById('idea-content').value = '';
+                updatePreview('idea');
+            }
+        }
+
+        function closeEditor(type) {
+            state.editingItem = null;
+            loadModule('blog');
+        }
+
+        function editBlog(index) {
+            state.editingItem = blogData[index];
+            const item = state.editingItem;
+
+            document.querySelectorAll('.module').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.admin-editor').forEach(el => el.classList.remove('active'));
+            document.getElementById('editor-blog').classList.add('active');
+
+            document.getElementById('blog-editor-title').textContent = '编辑文章';
+            document.getElementById('blog-id').value = item.id || '';
+            document.getElementById('blog-title').value = item.title || '';
+            document.getElementById('blog-category').value = item.category || 'GPU';
+            document.getElementById('blog-color').value = item.categoryClass || 'blue';
+            document.getElementById('blog-date').value = item.date || '';
+            document.getElementById('blog-readtime').value = item.readTime || 5;
+            setTags('blog', item.tags || []);
+            document.getElementById('blog-content').value = item.content || '';
+            updatePreview('blog');
+        }
+
+        async function saveBlog() {
+            const id = document.getElementById('blog-id').value.trim();
+            const title = document.getElementById('blog-title').value.trim();
+            if (!id || !title) {
+                showToast('请填写文章 ID 和标题', 'error');
+                return;
+            }
+
+            const item = {
+                id: id,
+                title: title,
+                category: document.getElementById('blog-category').value,
+                categoryClass: document.getElementById('blog-color').value,
+                date: document.getElementById('blog-date').value,
+                readTime: parseInt(document.getElementById('blog-readtime').value) || 5,
+                tags: getTags('blog'),
+                content: document.getElementById('blog-content').value
+            };
+
+            try {
+                if (state.editingItem && state.editingItem.id) {
+                    // Update existing
+                    const index = blogData.findIndex(b => b.id === state.editingItem.id);
+                    if (index !== -1) {
+                        blogData[index] = item;
+                    } else {
+                        blogData.push(item);
+                        blogData.sort((a, b) => b.date.localeCompare(a.date));
+                    }
+                } else {
+                    // New item
+                    item.date = item.date || new Date().toISOString().split('T')[0];
+                    blogData.push(item);
+                    blogData.sort((a, b) => b.date.localeCompare(a.date));
+                }
+
+                const result = await saveData('blog.json', blogData, blogSha);
+                blogSha = result.content.sha;
+                state.editingItem = null;
+                showToast('保存成功！', 'success');
+
+                // Update article.html with new data
+                renderBlogList();
+            } catch (e) {
+                showToast('保存失败：' + e.message, 'error');
+            }
+        }
+
+        async function deleteBlog(index) {
+            if (!confirm('确定删除 "' + blogData[index].title + '"？')) return;
+            blogData.splice(index, 1);
+            const result = await saveData('blog.json', blogData, blogSha);
+            blogSha = result.content.sha;
+            showToast('已删除', 'success');
+            renderBlogList();
+        }
+
+        // ===== Projects =====
+        let projectsData = [];
+        let projectsSha = null;
+
+        async function loadProjectsList() {
+            const result = await fetchData('projects.json');
+            projectsData = result.data;
+            projectsSha = result.sha;
+            renderProjectsList();
+        }
+
+        function renderProjectsList() {
+            const container = document.getElementById('projects-list');
+            if (projectsData.length === 0) {
+                container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted)">暂无项目，点击"新建项目"开始</div>';
+                return;
+            }
+            container.innerHTML = projectsData.map((item, i) => `
+                <div class="admin-list-item">
+                    <div class="item-info">
+                        <div class="item-title">
+                            <span class="status-badge-small ${item.status}">${
+                                item.status === 'active' ? '进行中' :
+                                item.status === 'completed' ? '已完成' : '已归档'
+                            }</span>
+                            ${item.title}
+                        </div>
+                        <div class="item-meta">${item.category} · ${item.techs ? item.techs.join(', ') : ''}</div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-sm" onclick="editProject(${i})">编辑</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteProject(${i})">删除</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function editProject(index) {
+            state.editingItem = projectsData[index];
+            const item = state.editingItem;
+
+            document.querySelectorAll('.module').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.admin-editor').forEach(el => el.classList.remove('active'));
+            document.getElementById('editor-projects').classList.add('active');
+
+            document.getElementById('projects-editor-title').textContent = '编辑项目';
+            document.getElementById('project-id').value = item.id || '';
+            document.getElementById('project-title').value = item.title || '';
+            document.getElementById('project-category').value = item.category || '';
+            document.getElementById('project-status').value = item.status || 'active';
+            document.getElementById('project-color').value = item.color || 'green';
+            document.getElementById('project-desc').value = item.description || '';
+            document.getElementById('project-github').value = item.github || '';
+            document.getElementById('project-demo').value = item.demo || '';
+            document.getElementById('project-techs').value = item.techs ? item.techs.join(', ') : '';
+        }
+
+        async function saveProject() {
+            const id = document.getElementById('project-id').value.trim();
+            const title = document.getElementById('project-title').value.trim();
+            if (!id || !title) {
+                showToast('请填写项目 ID 和标题', 'error');
+                return;
+            }
+
+            const item = {
+                id: id,
+                title: title,
+                category: document.getElementById('project-category').value,
+                status: document.getElementById('project-status').value,
+                color: document.getElementById('project-color').value,
+                description: document.getElementById('project-desc').value,
+                github: document.getElementById('project-github').value,
+                demo: document.getElementById('project-demo').value,
+                techs: document.getElementById('project-techs').value.split(',').map(s => s.trim()).filter(Boolean)
+            };
+
+            try {
+                if (state.editingItem && state.editingItem.id) {
+                    const index = projectsData.findIndex(p => p.id === state.editingItem.id);
+                    if (index !== -1) projectsData[index] = item;
+                } else {
+                    projectsData.push(item);
+                }
+
+                const result = await saveData('projects.json', projectsData, projectsSha);
+                projectsSha = result.content.sha;
+                state.editingItem = null;
+                showToast('保存成功！', 'success');
+                renderProjectsList();
+            } catch (e) {
+                showToast('保存失败：' + e.message, 'error');
+            }
+        }
+
+        async function deleteProject(index) {
+            if (!confirm('确定删除 "' + projectsData[index].title + '"？')) return;
+            projectsData.splice(index, 1);
+            const result = await saveData('projects.json', projectsData, projectsSha);
+            projectsSha = result.content.sha;
+            showToast('已删除', 'success');
+            renderProjectsList();
+        }
+
+        // ===== Ideas =====
+        let ideasData = [];
+        let ideasSha = null;
+
+        async function loadIdeasList() {
+            const result = await fetchData('ideas.json');
+            ideasData = result.data;
+            ideasSha = result.sha;
+            renderIdeasList();
+        }
+
+        function renderIdeasList() {
+            const container = document.getElementById('ideas-list');
+            if (ideasData.length === 0) {
+                container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted)">暂无思考，点击"新建思考"开始</div>';
+                return;
+            }
+            container.innerHTML = ideasData.map((item, i) => `
+                <div class="admin-list-item">
+                    <div class="item-info">
+                        <div class="item-title">${item.title}</div>
+                        <div class="item-meta">
+                            <span class="status-badge-small ${item.status}">${
+                                item.status === 'active' ? '活跃思考中' : '暂停探索'
+                            }</span> · ${item.date}
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-sm" onclick="editIdea(${i})">编辑</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteIdea(${i})">删除</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function editIdea(index) {
+            state.editingItem = ideasData[index];
+            const item = state.editingItem;
+
+            document.querySelectorAll('.module').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.admin-editor').forEach(el => el.classList.remove('active'));
+            document.getElementById('editor-ideas').classList.add('active');
+
+            document.getElementById('ideas-editor-title').textContent = '编辑思考';
+            document.getElementById('idea-title').value = item.title || '';
+            document.getElementById('idea-status').value = item.status || 'active';
+            document.getElementById('idea-date').value = item.date ? item.date.replace('-', '') : '';
+            document.getElementById('idea-content').value = item.content || '';
+            updatePreview('idea');
+        }
+
+        async function saveIdea() {
+            const title = document.getElementById('idea-title').value.trim();
+            if (!title) {
+                showToast('请填写标题', 'error');
+                return;
+            }
+
+            const item = {
+                id: state.editingItem && state.editingItem.id ? state.editingItem.id : 'idea-' + String(ideasData.length + 1).padStart(2, '0'),
+                title: title,
+                status: document.getElementById('idea-status').value,
+                date: document.getElementById('idea-date').value.replace('-', '-'),
+                content: document.getElementById('idea-content').value
+            };
+
+            try {
+                if (state.editingItem && state.editingItem.id) {
+                    const index = ideasData.findIndex(p => p.id === state.editingItem.id);
+                    if (index !== -1) ideasData[index] = item;
+                } else {
+                    ideasData.push(item);
+                }
+
+                const result = await saveData('ideas.json', ideasData, ideasSha);
+                ideasSha = result.content.sha;
+                state.editingItem = null;
+                showToast('保存成功！', 'success');
+                renderIdeasList();
+            } catch (e) {
+                showToast('保存失败：' + e.message, 'error');
+            }
+        }
+
+        async function deleteIdea(index) {
+            if (!confirm('确定删除 "' + ideasData[index].title + '"？')) return;
+            ideasData.splice(index, 1);
+            const result = await saveData('ideas.json', ideasData, ideasSha);
+            ideasSha = result.content.sha;
+            showToast('已删除', 'success');
+            renderIdeasList();
+        }
+
+        // ===== About =====
+        async function loadAbout() {
+            try {
+                const url = `https://api.github.com/repos/${state.owner}/${state.repo}/contents/public/about.html`;
+                const res = await fetch(url, {
+                    headers: { 'Authorization': 'Bearer ' + state.token }
+                });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const json = await res.json();
+                const content = decodeBase64(json.content);
+                document.getElementById('about-content').value = content;
+                state._aboutSha = json.sha;
+            } catch (e) {
+                document.getElementById('about-content').value = '/* 无法加载文件: ' + e.message + ' */';
+                showToast('加载失败：' + e.message, 'error');
+            }
+        }
+
+        async function saveAbout() {
+            const content = document.getElementById('about-content').value;
+            if (!content.trim()) {
+                showToast('内容不能为空', 'error');
+                return;
+            }
+
+            try {
+                const url = `https://api.github.com/repos/${state.owner}/${state.repo}/contents/public/about.html`;
+                const res = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': 'Bearer ' + state.token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: 'Update about.html via CMS',
+                        content: btoa(unescape(encodeURIComponent(content))),
+                        sha: state._aboutSha,
+                        branch: 'main'
+                    })
+                });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                showToast('保存成功！', 'success');
+            } catch (e) {
+                showToast('保存失败：' + e.message, 'error');
+            }
+        }
+
+        // ===== Tags =====
+        function clearTags(prefix) {
+            const container = document.getElementById(prefix + '-tags');
+            const input = document.getElementById(prefix + '-tag-input');
+            container.querySelectorAll('.tag-chip').forEach(el => el.remove());
+            input.value = '';
+        }
+
+        function setTags(prefix, tags) {
+            clearTags(prefix);
+            const container = document.getElementById(prefix + '-tags');
+            const input = document.getElementById(prefix + '-tag-input');
+            tags.forEach(tag => {
+                const chip = document.createElement('span');
+                chip.className = 'tag-chip';
+                chip.innerHTML = tag + '<span class="tag-remove">×</span>';
+                container.insertBefore(chip, input);
+            });
+        }
+
+        function getTags(prefix) {
+            const container = document.getElementById(prefix + '-tags');
+            const chips = container.querySelectorAll('.tag-chip');
+            return Array.from(chips).map(el => el.textContent.trim());
+        }
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && e.target.classList.contains('tag-input')) {
+                const value = e.target.value.trim();
+                if (!value) return;
+
+                // Check for duplicate
+                const container = e.target.parentElement;
+                const existing = container.querySelectorAll('.tag-chip');
+                for (let chip of existing) {
+                    if (chip.textContent.trim() === value) return;
+                }
+
+                const chip = document.createElement('span');
+                chip.className = 'tag-chip';
+                chip.innerHTML = value + '<span class="tag-remove">×</span>';
+                container.insertBefore(chip, e.target);
+                e.target.value = '';
+            }
+        });
+
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('tag-remove')) {
+                e.target.parentElement.remove();
+            }
+        });
+
+        // ===== Markdown Preview =====
+        function simpleMarkdown(md) {
+            if (!md) return '';
+            md = md.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            md = md.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
+            md = md.replace(/`([^`]+)`/g, '<code>$1</code>');
+            md = md.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+            md = md.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+            md = md.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+            md = md.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            md = md.replace(/\*(.+?)\*/g, '<em>$1</em>');
+            md = md.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>');
+            md = md.replace(/^- (.+)$/gm, '<li>$1</li>');
+            md = md.replace(/((<li>.*<\/li>\n?)+)/g, '<ul>$1</ul>');
+            md = md.replace(/^---$/gm, '<hr>');
+            md = md.replace(/\n\n/g, '</p><p>');
+            md = md.replace(/\n/g, '<br>');
+            return '<p>' + md + '</p>';
+        }
+
+        function updatePreview(type) {
+            const content = document.getElementById(type === 'blog' ? 'blog-content' : 'idea-content').value;
+            const preview = document.getElementById(type === 'blog' ? 'blog-preview' : 'idea-preview');
+            preview.innerHTML = simpleMarkdown(content);
+        }
+
+        document.getElementById('blog-content').addEventListener('input', function () {
+            updatePreview('blog');
+        });
+
+        document.getElementById('idea-content').addEventListener('input', function () {
+            updatePreview('idea');
+        });
+
+        // ===== Toast =====
+        function showToast(msg, type) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = 'toast show ' + (type || '');
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(function () {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // ===== Start =====
+        init();
+    })();
+    </script>
+</body>
+</html>

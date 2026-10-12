@@ -1,0 +1,8 @@
+# Hasen Personal Website - Robots.txt
+# https://hasen.dev
+
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://hasen.dev/sitemap.xml

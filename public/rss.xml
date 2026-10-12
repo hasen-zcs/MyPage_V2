@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Hasen — Blog</title>
+        <link>https://hasen.dev/</link>
+        <description>软件工程学生，AI / 深度学习 / GPU 计算。把想法变成可以运行的东西。</description>
+        <language>zh-cn</language>
+        <lastBuildDate>2026-08-17T00:00:00+08:00</lastBuildDate>
+        <atom:link href="https://hasen.dev/rss.xml" rel="self" type="application/rss+xml"/>
+
+        <item>
+            <title>FlashAttention 中的 Causal Mask</title>
+            <link>https://hasen.dev/article.html?id=flashattention-causal</link>
+            <description>从 Score Tile 出发理解 Causal Mask 的实现过程。分析 FlashAttention 如何在分块计算中正确处理因果掩码，避免未来信息的泄漏。</description>
+            <pubDate>2026-08-16T00:00:00+08:00</pubDate>
+            <guid>https://hasen.dev/article.html?id=flashattention-causal</guid>
+        </item>
+
+        <item>
+            <title>Transformer 学习记录</title>
+            <link>https://hasen.dev/article.html?id=transformer-notes</link>
+            <description>从位置编码、多头注意力到 Encoder 和 Decoder，从零理解 Transformer 的架构设计。梳理每个组件的作用和数学推导。</description>
+            <pubDate>2026-08-13T00:00:00+08:00</pubDate>
+            <guid>https://hasen.dev/article.html?id=transformer-notes</guid>
+        </item>
+
+        <item>
+            <title>RoPE、YaRN 与 RMSNorm</title>
+            <link>https://hasen.dev/article.html?id=rope-yarn-rmsnorm</link>
+            <description>MiniMind 学习过程中的一些记录。对比不同位置编码方法的优劣，以及 RMSNorm 在训练稳定性中的作用。</description>
+            <pubDate>2026-08-13T00:00:00+08:00</pubDate>
+            <guid>https://hasen.dev/article.html?id=rope-yarn-rmsnorm</guid>
+        </item>
+
+        <item>
+            <title>个人主页设计笔记</title>
+            <link>https://hasen.dev/article.html?id=homepage-design</link>
+            <description>从 V1 到 V2 的设计思考：为什么选择暗色主题、CSS 变量的使用、响应式断点的选择。</description>
+            <pubDate>2026-08-10T00:00:00+08:00</pubDate>
+            <guid>https://hasen.dev/article.html?id=homepage-design</guid>
+        </item>
+
+        <item>
+            <title>Diffusion Model 入门笔记</title>
+            <link>https://hasen.dev/article.html?id=diffusion-intro</link>
+            <description>从 DDPM 到 Stable Diffusion：扩散模型的训练过程、采样算法、以及 latent diffusion 的设计思路。</description>
+            <pubDate>2026-08-05T00:00:00+08:00</pubDate>
+            <guid>https://hasen.dev/article.html?id=diffusion-intro</guid>
+        </item>
+
+        <item>
+            <title>CUDA 并行编程基础</title>
+            <link>https://hasen.dev/article.html?id=cuda-basics</link>
+            <description>CUDA 线程模型、内存层次结构、共享内存优化。从 kernel 到 warp 的并行执行机制。</description>
+            <pubDate>2026-08-01T00:00:00+08:00</pubDate>
+            <guid>https://hasen.dev/article.html?id=cuda-basics</guid>
+        </item>
+
+    </channel>
+</rss>

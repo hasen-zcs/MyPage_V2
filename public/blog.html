@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Hasen 的个人笔记 — 记录深度学习、AI、GPU 计算的学习过程和技术思考。">
+    <meta name="theme-color" content="#fafcfb">
+    <!-- Open Graph / Social -->
+    <meta property="og:title" content="Blog — Hasen">
+    <meta property="og:description" content="个人笔记 — 记录学习过程和技术思考。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://hasen.dev/blog.html">
+    <meta property="og:image" content="https://hasen.dev/assets/og-blog.png">
+    <meta property="og:locale" content="zh_CN">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Blog — Hasen">
+    <meta name="twitter:description" content="个人笔记 — 记录学习过程和技术思考。">
+    <meta name="twitter:image" content="https://hasen.dev/assets/og-blog.png">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
+    <link rel="manifest" href="manifest.json">
+    <title>Blog — Hasen</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- ==================== Navbar ==================== -->
+    <nav class="navbar" id="navbar">
+        <a href="home.html" class="logo">
+            <span class="logo-dot"></span>
+            hasen
+        </a>
+        <ul class="nav-links">
+            <li><a href="home.html">首页</a></li>
+            <li><a href="blog.html" class="active">博客</a></li>
+            <li><a href="projects.html">项目</a></li>
+            <li><a href="ideas.html">思考</a></li>
+            <li><a href="about.html">关于</a></li>
+        </ul>
+        <div class="nav-actions">
+            <button class="theme-toggle" id="theme-toggle" aria-label="切换主题">
+                <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+            <button class="hamburger" id="hamburger" aria-label="菜单">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ==================== Mobile Nav Overlay ==================== -->
+    <div class="mobile-nav" id="mobile-nav">
+        <button class="theme-toggle mobile-theme-toggle" id="theme-toggle-mobile" aria-label="切换主题">
+            <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <a href="home.html">首页</a>
+        <a href="blog.html" class="active">博客</a>
+        <a href="projects.html">项目</a>
+        <a href="ideas.html">思考</a>
+        <a href="about.html">关于</a>
+    </div>
+
+    <!-- ==================== Page Banner ==================== -->
+    <section class="page-banner">
+        <div class="banner-bg-pattern"></div>
+        <div class="banner-content">
+            <h1>Blog</h1>
+            <p>个人笔记 — 记录学习过程和技术思考</p>
+        </div>
+    </section>
+
+    <!-- ==================== Search Bar ==================== -->
+    <div class="search-bar">
+        <div class="search-inner">
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="blog-search" placeholder="搜索文章..." class="search-input">
+            <button class="search-clear" id="search-clear" style="display:none" aria-label="清除搜索">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== Category Filter ==================== -->
+    <div class="filter-bar">
+        <div class="filter-inner">
+            <button class="filter-btn active" data-filter="all">全部</button>
+            <button class="filter-btn" data-filter="gpu">GPU</button>
+            <button class="filter-btn" data-filter="transformer">Transformer</button>
+            <button class="filter-btn" data-filter="ai">AI</button>
+            <button class="filter-btn" data-filter="other">其他</button>
+        </div>
+    </div>
+
+    <!-- ==================== Blog Posts ==================== -->
+    <main class="main">
+        <div class="blog-grid">
+            <div class="content-col" id="blog-list">
+                <article class="post-card" data-category="gpu">
+                    <div class="post-date">2026-08-16</div>
+                    <div class="post-body">
+                        <span class="post-cat post-cat--blue">GPU</span>
+                        <h3><a href="article.html?id=flashattention-causal">FlashAttention 中的 Causal Mask</a></h3>
+                        <p>从 Score Tile 出发理解 Causal Mask 的实现过程。分析 FlashAttention 如何在分块计算中正确处理因果掩码，避免未来信息的泄漏。</p>
+                        <div class="post-meta">
+                            <span>阅读 8 分钟</span>
+                            <span>·</span>
+                            <span>2026-08-16</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="post-card" data-category="transformer">
+                    <div class="post-date">2026-08-13</div>
+                    <div class="post-body">
+                        <span class="post-cat post-cat--amber">Transformer</span>
+                        <h3><a href="article.html?id=transformer-notes">Transformer 学习记录</a></h3>
+                        <p>从位置编码、多头注意力到 Encoder 和 Decoder，从零理解 Transformer 的架构设计。梳理每个组件的作用和数学推导。</p>
+                        <div class="post-meta">
+                            <span>阅读 12 分钟</span>
+                            <span>·</span>
+                            <span>2026-08-13</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="post-card" data-category="ai">
+                    <div class="post-date">2026-08-13</div>
+                    <div class="post-body">
+                        <span class="post-cat post-cat--coral">AI</span>
+                        <h3><a href="article.html?id=rope-yarn-rmsnorm">RoPE、YaRN 与 RMSNorm</a></h3>
+                        <p>MiniMind 学习过程中的一些记录。对比不同位置编码方法的优劣，以及 RMSNorm 在训练稳定性中的作用。</p>
+                        <div class="post-meta">
+                            <span>阅读 10 分钟</span>
+                            <span>·</span>
+                            <span>2026-08-13</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="post-card" data-category="other">
+                    <div class="post-date">2026-08-10</div>
+                    <div class="post-body">
+                        <span class="post-cat post-cat--green">Dev</span>
+                        <h3><a href="article.html?id=homepage-design">个人主页设计笔记</a></h3>
+                        <p>从 V1 到 V2 的设计思考：为什么选择暗色主题、CSS 变量的使用、响应式断点的选择。</p>
+                        <div class="post-meta">
+                            <span>阅读 5 分钟</span>
+                            <span>·</span>
+                            <span>2026-08-10</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="post-card" data-category="ai">
+                    <div class="post-date">2026-08-05</div>
+                    <div class="post-body">
+                        <span class="post-cat post-cat--violet">AI</span>
+                        <h3><a href="article.html?id=diffusion-intro">Diffusion Model 入门笔记</a></h3>
+                        <p>从 DDPM 到 Stable Diffusion：扩散模型的训练过程、采样算法、以及 latent diffusion 的设计思路。</p>
+                        <div class="post-meta">
+                            <span>阅读 15 分钟</span>
+                            <span>·</span>
+                            <span>2026-08-05</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="post-card" data-category="gpu">
+                    <div class="post-date">2026-08-01</div>
+                    <div class="post-body">
+                        <span class="post-cat post-cat--blue">GPU</span>
+                        <h3><a href="article.html?id=cuda-basics">CUDA 并行编程基础</a></h3>
+                        <p>CUDA 线程模型、内存层次结构、共享内存优化。从 kernel 到 warp 的并行执行机制。</p>
+                        <div class="post-meta">
+                            <span>阅读 20 分钟</span>
+                            <span>·</span>
+                            <span>2026-08-01</span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <!-- No results placeholder -->
+            <div class="no-results" id="no-results" style="display:none">
+                <div class="no-results-icon">🔍</div>
+                <h3>未找到匹配的文章</h3>
+                <p>试试其他关键词或筛选条件</p>
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <section class="sidebar-card stack-card">
+                    <div class="stack-header">
+                        <span class="stack-label">CATEGORIES</span>
+                        <h2>分类</h2>
+                    </div>
+                    <div class="stack-grid">
+                        <span class="stack-tag" style="cursor:pointer" data-filter="gpu">GPU</span>
+                        <span class="stack-tag" style="cursor:pointer" data-filter="transformer">Transformer</span>
+                        <span class="stack-tag" style="cursor:pointer" data-filter="ai">AI</span>
+                        <span class="stack-tag" style="cursor:pointer" data-filter="other">其他</span>
+                    </div>
+                </section>
+
+                <section class="sidebar-card stack-card">
+                    <div class="stack-header">
+                        <span class="stack-label">ARCHIVE</span>
+                        <h2>归档</h2>
+                    </div>
+                    <div class="archive-list">
+                        <a href="#" class="archive-item">2026 年 8 月</a>
+                        <a href="#" class="archive-item">2026 年 7 月</a>
+                        <a href="#" class="archive-item">2026 年 6 月</a>
+                    </div>
+                </section>
+            </aside>
+        </div>
+    </main>
+
+    <!-- ==================== Footer ==================== -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <span>© 2026 Hasen</span>
+            <span>Built with HTML · CSS · JavaScript</span>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

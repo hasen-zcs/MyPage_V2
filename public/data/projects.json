@@ -1,0 +1,43 @@
+[
+  {
+    "id": "ai-vision-system",
+    "title": "AI Vision System",
+    "category": "AI · Computer Vision",
+    "status": "active",
+    "color": "green",
+    "description": "基于深度学习的视觉识别与边缘端模型部署项目。使用 YOLO 系列模型实现实时目标检测，并通过模型压缩和量化技术在嵌入式设备上运行。",
+    "techs": ["Python", "PyTorch", "YOLO", "TensorRT"],
+    "github": "https://github.com/hasen-dev/ai-vision-system",
+    "demo": "https://demo.hasen.dev/ai-vision"
+  },
+  {
+    "id": "ai-image-gen",
+    "title": "AI Image Generation",
+    "category": "Deep Learning · Generative AI",
+    "status": "completed",
+    "color": "blue",
+    "description": "VAE、DDPM、Stable Diffusion 等图像生成模型的实验项目。实现从基础模型到 Latent Diffusion 的完整训练流程，并探索风格迁移的应用。",
+    "techs": ["PyTorch", "Diffusion", "FastAPI", "Gradio"],
+    "github": "https://github.com/hasen-dev/ai-image-gen"
+  },
+  {
+    "id": "cuda-kernel-opt",
+    "title": "CUDA Kernel Optimization",
+    "category": "Systems · GPU",
+    "status": "archived",
+    "color": "violet",
+    "description": "CUDA 并行计算实验。实现矩阵乘法、卷积操作的 GPU 加速，探索共享内存优化和 warp-level 原语的使用。",
+    "techs": ["CUDA", "C++", "Nsight"],
+    "github": "https://github.com/hasen-dev/cuda-kernel-opt"
+  },
+  {
+    "id": "minimind",
+    "title": "MiniMind",
+    "category": "Systems · LLM",
+    "status": "active",
+    "color": "amber",
+    "description": "从零实现一个小型语言模型。包括 Tokenizer、Transformer 架构、训练循环、推理接口，完整复现大模型的核心组件。",
+    "techs": ["Python", "PyTorch", "RoPE", "FlashAttention"],
+    "github": "https://github.com/hasen-dev/minimind"
+  }
+]

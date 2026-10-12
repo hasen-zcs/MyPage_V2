@@ -1,0 +1,586 @@
+<!-- This is the article page template. The GitHub Actions workflow injects blog data here. -->
+<!-- When running locally, use public/article.html directly. -->
+<!-- This template ensures the build workflow can read the structure. -->
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Hasen 的博客文章 — 深度学习、AI、GPU 计算的技术笔记。">
+    <meta name="theme-color" content="#0b1110">
+    <!-- Open Graph / Social -->
+    <meta property="og:title" content="文章 — Hasen">
+    <meta property="og:description" content="博客文章 — 深度学习、AI、GPU 计算的技术笔记。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://hasen.dev/article.html">
+    <meta property="og:image" content="https://hasen.dev/assets/og-article.png">
+    <meta property="og:locale" content="zh_CN">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="文章 — Hasen">
+    <meta name="twitter:description" content="博客文章 — 深度学习、AI、GPU 计算的技术笔记。">
+    <meta name="twitter:image" content="https://hasen.dev/assets/og-article.png">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
+    <link rel="manifest" href="manifest.json">
+    <title>文章 — Hasen</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* Article page specific styles */
+        .article-layout {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 0 20px 80px;
+        }
+
+        .article-header {
+            margin-bottom: 40px;
+        }
+
+        .article-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            transition: color 0.2s;
+        }
+
+        .article-back:hover {
+            color: var(--green);
+        }
+
+        .article-category {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            padding: 3px 10px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        .article-category--blue { color: var(--blue); background: rgba(59, 141, 212, 0.08); }
+        .article-category--amber { color: var(--amber); background: rgba(232, 168, 56, 0.08); }
+        .article-category--coral { color: var(--coral); background: rgba(217, 91, 67, 0.08); }
+        .article-category--green { color: var(--green); background: var(--green-glow); }
+        .article-category--violet { color: var(--violet); background: rgba(123, 97, 174, 0.08); }
+
+        .article-title {
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .article-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .article-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .article-divider {
+            width: 1px;
+            height: 12px;
+            background: var(--border);
+        }
+
+        .article-content {
+            font-size: 15px;
+            line-height: 1.75;
+            color: var(--text);
+        }
+
+        .article-content h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-top: 40px;
+            margin-bottom: 16px;
+            letter-spacing: -0.01em;
+        }
+
+        .article-content h3 {
+            font-size: 19px;
+            font-weight: 600;
+            margin-top: 32px;
+            margin-bottom: 12px;
+        }
+
+        .article-content p {
+            margin-bottom: 16px;
+        }
+
+        .article-content ul, .article-content ol {
+            margin: 16px 0;
+            padding-left: 24px;
+        }
+
+        .article-content li {
+            margin-bottom: 8px;
+        }
+
+        .article-content blockquote {
+            border-left: 3px solid var(--green);
+            padding: 12px 20px;
+            margin: 20px 0;
+            background: var(--green-glow);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .article-content code {
+            font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", "Consolas", monospace;
+            font-size: 0.9em;
+            background: var(--surface-hover);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 2px 6px;
+            color: var(--green);
+        }
+
+        .article-content pre {
+            position: relative;
+            margin: 20px 0;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .article-content pre code {
+            display: block;
+            padding: 20px;
+            background: var(--surface);
+            border: none;
+            font-size: 13px;
+            line-height: 1.7;
+            overflow-x: auto;
+            color: var(--text);
+            padding-right: 60px;
+        }
+
+        .code-lang {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: inherit;
+        }
+
+        .article-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .article-tag {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background: var(--surface-hover);
+            border: 1px solid var(--border);
+            padding: 4px 12px;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+
+        .article-tag:hover {
+            color: var(--green);
+            background: var(--green-glow);
+            border-color: var(--green-glow-strong);
+        }
+
+        .article-nav {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border);
+        }
+
+        .article-nav-item {
+            padding: 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            transition: all 0.2s;
+        }
+
+        .article-nav-item:hover {
+            border-color: var(--border-strong);
+            box-shadow: var(--shadow);
+        }
+
+        .article-nav-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 6px;
+        }
+
+        .article-nav-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--green);
+        }
+
+        .article-nav-item.next {
+            text-align: right;
+        }
+
+        /* Loading state */
+        .article-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 40vh;
+        }
+
+        .article-loading-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border);
+            border-top-color: var(--green);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* Error state */
+        .article-error {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .article-error h2 {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .article-error p {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .article-title {
+                font-size: 28px;
+            }
+
+            .article-content {
+                font-size: 15px;
+            }
+
+            .article-content pre code {
+                font-size: 12px;
+                padding: 16px;
+            }
+
+            .article-nav {
+                grid-template-columns: 1fr;
+            }
+
+            .article-nav-item.next {
+                text-align: left;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .article-title {
+                font-size: 24px;
+            }
+
+            .article-content h2 {
+                font-size: 20px;
+            }
+
+            .article-content h3 {
+                font-size: 17px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== Navbar ==================== -->
+    <nav class="navbar" id="navbar">
+        <a href="home.html" class="logo">
+            <span class="logo-dot"></span>
+            hasen
+        </a>
+        <ul class="nav-links">
+            <li><a href="home.html">首页</a></li>
+            <li><a href="blog.html">博客</a></li>
+            <li><a href="projects.html">项目</a></li>
+            <li><a href="ideas.html">思考</a></li>
+            <li><a href="about.html">关于</a></li>
+        </ul>
+        <div class="nav-actions">
+            <button class="theme-toggle" id="theme-toggle" aria-label="切换主题">
+                <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+            <button class="hamburger" id="hamburger" aria-label="菜单">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ==================== Mobile Nav Overlay ==================== -->
+    <div class="mobile-nav" id="mobile-nav">
+        <button class="theme-toggle mobile-theme-toggle" id="theme-toggle-mobile" aria-label="切换主题">
+            <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <a href="home.html">首页</a>
+        <a href="blog.html">博客</a>
+        <a href="projects.html">项目</a>
+        <a href="ideas.html">思考</a>
+        <a href="about.html">关于</a>
+    </div>
+
+    <!-- ==================== Article Content ==================== -->
+    <main class="main">
+        <div class="article-layout" id="article-container">
+            <div class="article-loading">
+                <div class="article-loading-spinner"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ==================== Footer ==================== -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <span>© 2026 Hasen</span>
+            <span>Built with HTML · CSS · JavaScript</span>
+        </div>
+    </footer>
+
+    <!-- ==================== Article Data ==================== -->
+    <script id="article-data" type="application-json">
+    <!--DATA_PLACEHOLDER-->
+    </script>
+
+    <script src="app.js"></script>
+    <script>
+    /* =========================================================
+       Article Page — Load and render article content
+       ========================================================= */
+    (function () {
+        'use strict';
+
+        // Get article ID from URL
+        function getArticleId() {
+            var params = new URLSearchParams(window.location.search);
+            return params.get('id') || '';
+        }
+
+        // Simple markdown parser (zero dependency)
+        function parseMarkdown(md) {
+            if (!md) return '';
+
+            // Escape HTML
+            md = md.replace(/&/g, '&amp;')
+                   .replace(/</g, '&lt;')
+                   .replace(/>/g, '&gt;');
+
+            // Code blocks (must be first)
+            md = md.replace(/```(\w*)\n([\s\S]*?)```/g, function (match, lang, code) {
+                lang = lang || 'text';
+                code = code.trim();
+                return '<pre><code class="lang-' + lang + '">' + code + '<span class="code-lang">' + lang + '</span></code></pre>';
+            });
+
+            // Inline code
+            md = md.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+            // Images
+            md = md.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">');
+
+            // Links
+            md = md.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" rel="noopener">$1</a>');
+
+            // Headings
+            md = md.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+            md = md.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+            md = md.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+
+            // Bold
+            md = md.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+            // Italic
+            md = md.replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+            // Blockquotes
+            md = md.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>');
+
+            // Tables (simple)
+            md = md.replace(/^\|(.+)\|$/gm, function (match, content) {
+                if (content.match(/^[\s\-:|]+$/)) return '<!--table-sep-->';
+                var cells = content.split('|').map(function (c) {
+                    return c.trim();
+                });
+                var row = '<tr>';
+                cells.forEach(function (cell) {
+                    row += '<td>' + cell + '</td>';
+                });
+                return row + '</tr>';
+            });
+            md = md.replace(/((<tr>.*<\/tr>\n?)+)/g, '<table>$1</table>');
+            md = md.replace(/<!--table-sep-->\n?/g, '');
+
+            // Horizontal rule
+            md = md.replace(/^---$/gm, '<hr>');
+
+            // Unordered list
+            md = md.replace(/^- (.+)$/gm, '<li>$1</li>');
+            md = md.replace(/((<li>.*<\/li>\n?)+)/g, '<ul>$1</ul>');
+
+            // Paragraphs
+            md = md.replace(/\n\n/g, '</p><p>');
+            md = md.replace(/\n/g, '<br>');
+
+            // Clean up
+            return '<p>' + md + '</p>';
+        }
+
+        // Syntax highlighting (simple)
+        function highlightCode(code) {
+            // Python keywords
+            var keywords = '\\b(def|class|return|if|else|for|while|import|from|as|in|not|and|or|True|False|None|print|self|lambda|try|except|with|yield|global|nonlocal|assert|del|pass|break|continue)\\b';
+            var numbers = '\\b\\d+\\.?\\d*\\b';
+
+            // Simple replacements (order matters)
+            code = code.replace(/(#.*$)/gm, '<span style="color:#6a9955">$1</span>');  // comments
+            code = code.replace(/(&quot;|&#39;)(.+?)\1/g, '<span style="color:#ce9178">$1$2$1</span>');  // strings
+            code = code.replace(/(".*?"|'.*?')/g, '<span style="color:#ce9178">$1</span>');  // strings
+            code = code.replace(new RegExp(keywords, 'g'), '<span style="color:#569cd6">$1</span>');  // keywords
+
+            return code;
+        }
+
+        // Render article
+        function renderArticle() {
+            var articleId = getArticleId();
+            var container = document.getElementById('article-container');
+            var dataEl = document.getElementById('article-data');
+
+            if (!articleId) {
+                container.innerHTML = '<div class="article-error">' +
+                    '<h2>文章未找到</h2>' +
+                    '<p>请检查链接是否正确</p>' +
+                    '<a href="blog.html" class="link-btn">← 返回博客列表</a>' +
+                    '</div>';
+                return;
+            }
+
+            var articles = {};
+            try {
+                var raw = dataEl.textContent.trim();
+                if (raw === '<!--DATA_PLACEHOLDER-->') {
+                    container.innerHTML = '<div class="article-error">' +
+                        '<h2>文章数据未加载</h2>' +
+                        '<p>请等待数据加载完成</p>' +
+                        '<a href="blog.html" class="link-btn">← 返回博客列表</a>' +
+                        '</div>';
+                    return;
+                }
+                articles = JSON.parse(raw);
+            } catch (e) {
+                console.error('Failed to parse article data:', e);
+            }
+
+            var article = articles[articleId];
+
+            if (!article) {
+                container.innerHTML = '<div class="article-error">' +
+                    '<h2>文章未找到</h2>' +
+                    '<p>文章 "' + articleId + '" 不存在或已被移除。</p>' +
+                    '<a href="blog.html" class="link-btn">← 返回博客列表</a>' +
+                    '</div>';
+                return;
+            }
+
+            // Build article HTML
+            var html = '';
+
+            // Back link
+            html += '<div class="article-header">';
+            html += '<a href="blog.html" class="article-back">← 返回博客列表</a>';
+
+            // Category badge
+            html += '<span class="article-category article-category--' + article.categoryClass + '">' +
+                    article.category + '</span>';
+
+            // Title
+            html += '<h1 class="article-title">' + article.title + '</h1>';
+
+            // Meta
+            html += '<div class="article-meta">';
+            html += '<span>' + article.date + '</span>';
+            html += '<span class="article-divider"></span>';
+            html += '<span>阅读 ' + article.readTime + ' 分钟</span>';
+            html += '</div>';
+            html += '</div>';
+
+            // Content
+            var parsedContent = parseMarkdown(article.content);
+            html += '<div class="article-content">' + parsedContent + '</div>';
+
+            // Tags
+            if (article.tags && article.tags.length > 0) {
+                html += '<div class="article-tags">';
+                article.tags.forEach(function (tag) {
+                    html += '<span class="article-tag">' + tag + '</span>';
+                });
+                html += '</div>';
+            }
+
+            // Article navigation (prev/next)
+            var articleIds = Object.keys(articles);
+            var currentIndex = articleIds.indexOf(articleId);
+            if (currentIndex !== -1 && articleIds.length > 1) {
+                html += '<div class="article-nav">';
+                // currentIndex + 1 = older article = "上一篇"
+                if (currentIndex < articleIds.length - 1) {
+                    var prev = articles[articleIds[currentIndex + 1]];
+                    html += '<div class="article-nav-item">';
+                    html += '<div class="article-nav-label">上一篇</div>';
+                    html += '<a href="?id=' + articleIds[currentIndex + 1] + '" class="article-nav-title">' + prev.title + '</a>';
+                    html += '</div>';
+                }
+                // currentIndex - 1 = newer article = "下一篇"
+                if (currentIndex > 0) {
+                    var next = articles[articleIds[currentIndex - 1]];
+                    html += '<div class="article-nav-item next">';
+                    html += '<div class="article-nav-label">下一篇</div>';
+                    html += '<a href="?id=' + articleIds[currentIndex - 1] + '" class="article-nav-title">' + next.title + '</a>';
+                    html += '</div>';
+                }
+                html += '</div>';
+            }
+
+            container.innerHTML = html;
+        }
+
+        renderArticle();
+    })();
+    </script>
+</body>
+</html>

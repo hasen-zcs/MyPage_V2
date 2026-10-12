@@ -1,0 +1,139 @@
+name: Build Static Site
+
+on:
+  push:
+    paths:
+      - 'data/**'
+      - 'admin.html'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate article.html from data
+        run: |
+          node -e '
+          const fs = require("fs");
+          const blog = JSON.parse(fs.readFileSync("data/blog.json", "utf8"));
+
+          // Build JSON data string
+          const dataStr = JSON.stringify(blog, null, 2);
+
+          // Read template
+          let html = fs.readFileSync("article-template.html", "utf8");
+
+          // Replace article data
+          html = html.replace(
+            /<script id="article-data"[^>]*>([\s\S]*?)<\/script>/,
+            "<script id=\"article-data\" type=\"application/json\">" + dataStr + "</script>"
+          );
+
+          // Write output
+          fs.writeFileSync("public/article.html", html);
+          console.log("Article page generated with " + blog.length + " articles");
+          '
+
+      - name: Update sitemap.xml
+        run: |
+          node -e '
+          const fs = require("fs");
+          let xml = fs.readFileSync("sitemap-template.xml", "utf8");
+
+          // Replace placeholder pages
+          const pages = [
+            { loc: "blog.html", priority: "0.8", changefreq: "weekly" },
+            { loc: "projects.html", priority: "0.8", changefreq: "monthly" },
+            { loc: "about.html", priority: "0.7", changefreq: "yearly" },
+            { loc: "ideas.html", priority: "0.6", changefreq: "monthly" }
+          ];
+
+          pages.forEach(p => {
+            xml = xml.replace(
+              "<!--PAGE:" + p.loc + "-->",
+              '<url><loc>https://hasen.dev/' + p.loc + '</loc><lastmod>' + new Date().toISOString().split("T")[0] + '</lastmod><changefreq>' + p.changefreq + '</changefreq><priority>' + p.priority + '</priority></url>'
+            );
+          });
+
+          fs.writeFileSync("public/sitemap.xml", xml);
+          '
+
+      - name: Update RSS feed
+        run: |
+          node -e '
+          const fs = require("fs");
+          const blog = JSON.parse(fs.readFileSync("data/blog.json", "utf8"));
+          const now = new Date().toISOString().replace("T", "T").split(".")[0] + "+08:00";
+
+          let xml = `<?xml version="1.0" encoding="UTF-8"?>
+          <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+              <channel>
+                  <title>Hasen — Blog</title>
+                  <link>https://hasen.dev/</link>
+                  <description>软件工程学生，AI / 深度学习 / GPU 计算。把想法变成可以运行的东西。</description>
+                  <language>zh-cn</language>
+                  <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+                  <atom:link href="https://hasen.dev/rss.xml" rel="self" type="application/rss+xml"/>
+          `;
+
+          blog.forEach(post => {
+              const pubDate = new Date(post.date).toUTCString();
+              const desc = (post.content || "").replace(/[#*`>\[\]|\n]/g, "").substring(0, 200);
+              xml += `
+                  <item>
+                      <title>${post.title}</title>
+                      <link>https://hasen.dev/article.html?id=${post.id}</link>
+                      <description>${desc}</description>
+                      <pubDate>${pubDate}</pubDate>
+                      <guid>https://hasen.dev/article.html?id=${post.id}</guid>
+                  </item>
+              `;
+          });
+
+          xml += "  </channel>\n</rss>";
+          fs.writeFileSync("public/rss.xml", xml);
+          console.log("RSS feed updated with " + blog.length + " articles");
+          '
+
+      - name: Update stats in home.html
+        run: |
+          node -e '
+          const fs = require("fs");
+          const blog = JSON.parse(fs.readFileSync("data/blog.json", "utf8"));
+          const html = fs.readFileSync("public/home.html", "utf8");
+
+          // Update stat posts count
+          let result = html;
+          result = result.replace(
+            /id="stat-posts"[^>]*>.*?<\/span>/,
+            'id="stat-posts">--</span>'
+          );
+
+          // Calculate word count
+          let totalWords = 0;
+          blog.forEach(post => {
+              const text = post.content || "";
+              totalWords += text.replace(/[#*`>\[\]|\n\r]/g, " ").split(/\s+/).filter(Boolean).length;
+          });
+
+          // Write back (keep -- for JS animation, but note real values)
+          fs.writeFileSync("public/home.html", result);
+          console.log("Total word count: " + totalWords);
+          '
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: auto-build from data changes"
+          file_pattern: public/*.html public/*.xml
